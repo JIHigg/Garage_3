@@ -1,0 +1,30 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Garage_3.Models.Entites
+{
+    public class ParkingPlace
+    {
+        [Key]
+        public int ParkingPlaceId { get; set; }
+        
+        public bool IsOccupied { get; set; }
+        public int Column_position { get; set; }
+        public int Row_position { get; set; }
+  
+
+        //Navigation
+
+        [ForeignKey("Garage")]
+        public int GarageId { get; set; }
+        
+
+        public virtual ICollection<Vehicle> Vehicle { get; set; }
+        public Garage Garage { get; set; }
+
+    }
+}
