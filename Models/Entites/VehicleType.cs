@@ -23,7 +23,7 @@ namespace Garage_3.Models.Entites
         public string Type_Name { get; set; }
 
         //Navigation
-        
-        
+       
+
     }
 }
