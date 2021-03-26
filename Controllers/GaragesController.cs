@@ -14,7 +14,6 @@ namespace Garage_3.Controllers
     public class GaragesController : Controller
     {
         private readonly Garage_3Context dbGarage;
-   
 
         public GaragesController(Garage_3Context context)
         {
@@ -150,37 +149,6 @@ namespace Garage_3.Controllers
         private bool GarageExists(int id)
         {
             return dbGarage.Garage.Any(e => e.GarageId == id);
-        }
-
-        // GET: Garages/Contact/5
-        [HttpGet("contact")]
-        public IActionResult Contact()
-        {
-            return View();
-        }
-
-        // POST: Garages/Contact/5
-        [HttpPost("contact")]
-        public IActionResult Contact(ContactViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                // send the email
-                
-            }
-            else
-            { 
-                // show the error
-            }
-            
-            return View();
-        }
-
-        // GET: Garages/About/5
-        [HttpGet("about")]
-        public IActionResult About()
-        {
-            return View();
         }
 
     }
