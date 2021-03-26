@@ -6,8 +6,6 @@ namespace Garage_3.Data
 {
     public class Garage_3Context : DbContext
     {
-        internal int Personnummer;
-
         public Garage_3Context (DbContextOptions<Garage_3Context> options)
             : base(options)
         {
