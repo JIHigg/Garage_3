@@ -42,6 +42,8 @@ namespace Garage_3.Models.Entites
         [Required(ErrorMessage = "Please Enter a Color")]
         public string Color { get; set; }
 
+        
+
 
         //Navigation
         [ForeignKey("Membership")]
