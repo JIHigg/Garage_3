@@ -67,7 +67,7 @@ namespace Garage_3.Controllers
             //    .ThenInclude(vt => vt.VehicleType)
             //    .FirstOrDefaultAsync(g => g.GarageId == id);
 
-            return View(await model.ToListAsync());
+            return View(await model);
         }
 
         // GET: Garages/Create
