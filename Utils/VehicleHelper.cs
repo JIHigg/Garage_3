@@ -170,5 +170,12 @@ namespace Garage_3.Utils
             //var price = Convert.ToString(minutes * pricePerMinute);
             return (double)(minutes * pricePerMinute);
         }
+
+        public static DateTime CalculateAge(string personnummer) 
+        {
+            string date = personnummer.ToCharArray(0, 7).ToString();
+            TimeSpan age = (DateTime.Now - DateTime.Parse(date));
+            int years = age.
+        }
     }
 }

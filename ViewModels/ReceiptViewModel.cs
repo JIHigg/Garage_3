@@ -45,7 +45,13 @@ namespace Garage_3.ViewModels
             {
                 return CheckOut.ToShortDateString();
             } }
-        public bool IsPro { get; set; }
+        public bool IsPro
+        { get 
+            {
+
+
+                return
+            } }
 
     }
 }
