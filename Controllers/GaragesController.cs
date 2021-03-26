@@ -7,22 +7,24 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Garage_3.Data;
 using Garage_3.Models.Entites;
+using Garage_3.Models;
 
 namespace Garage_3.Controllers
 {
     public class GaragesController : Controller
     {
-        private readonly Garage_3Context _context;
+        private readonly Garage_3Context dbGarage;
+   
 
         public GaragesController(Garage_3Context context)
         {
-            _context = context;
+            dbGarage = context;
         }
 
         // GET: Garages
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Garage.ToListAsync());
+            return View(await dbGarage.Garage.ToListAsync());
         }
 
         // GET: Garages/Details/5
@@ -33,7 +35,7 @@ namespace Garage_3.Controllers
                 return NotFound();
             }
 
-            var garage = await _context.Garage
+            var garage = await dbGarage.Garage
                 .FirstOrDefaultAsync(m => m.GarageId == id);
             if (garage == null)
             {
@@ -58,8 +60,8 @@ namespace Garage_3.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(garage);
-                await _context.SaveChangesAsync();
+                dbGarage.Add(garage);
+                await dbGarage.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(garage);
@@ -73,7 +75,7 @@ namespace Garage_3.Controllers
                 return NotFound();
             }
 
-            var garage = await _context.Garage.FindAsync(id);
+            var garage = await dbGarage.Garage.FindAsync(id);
             if (garage == null)
             {
                 return NotFound();
@@ -97,8 +99,8 @@ namespace Garage_3.Controllers
             {
                 try
                 {
-                    _context.Update(garage);
-                    await _context.SaveChangesAsync();
+                    dbGarage.Update(garage);
+                    await dbGarage.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -124,7 +126,7 @@ namespace Garage_3.Controllers
                 return NotFound();
             }
 
-            var garage = await _context.Garage
+            var garage = await dbGarage.Garage
                 .FirstOrDefaultAsync(m => m.GarageId == id);
             if (garage == null)
             {
@@ -139,15 +141,47 @@ namespace Garage_3.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var garage = await _context.Garage.FindAsync(id);
-            _context.Garage.Remove(garage);
-            await _context.SaveChangesAsync();
+            var garage = await dbGarage.Garage.FindAsync(id);
+            dbGarage.Garage.Remove(garage);
+            await dbGarage.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool GarageExists(int id)
         {
-            return _context.Garage.Any(e => e.GarageId == id);
+            return dbGarage.Garage.Any(e => e.GarageId == id);
         }
+
+        // GET: Garages/Contact/5
+        [HttpGet("contact")]
+        public IActionResult Contact()
+        {
+            return View();
+        }
+
+        // POST: Garages/Contact/5
+        [HttpPost("contact")]
+        public IActionResult Contact(ContactViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // send the email
+                
+            }
+            else
+            { 
+                // show the error
+            }
+            
+            return View();
+        }
+
+        // GET: Garages/About/5
+        [HttpGet("about")]
+        public IActionResult About()
+        {
+            return View();
+        }
+
     }
 }
