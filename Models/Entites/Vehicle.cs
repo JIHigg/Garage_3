@@ -42,7 +42,9 @@ namespace Garage_3.Models.Entites
         [Required(ErrorMessage = "Please Enter a Color")]
         public string Color { get; set; }
 
-        
+        //[DisplayName("Time of Arrival")]
+        //public DateTime CheckIn { get; set; }
+
 
 
         //Navigation

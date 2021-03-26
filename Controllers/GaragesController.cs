@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Garage_3.Data;
 using Garage_3.Models.Entites;
 using Garage_3.Models;
+using Garage_3.ViewModels;
 
 namespace Garage_3.Controllers
 {
@@ -41,7 +42,32 @@ namespace Garage_3.Controllers
                 return NotFound();
             }
 
-            return View(garage);
+            var model = dbGarage.Vehicle.Select(v => v)
+                                        .Include(m => m.Membership)
+                                        .Include(t => t.VehicleType)
+                                        .Where(i => i.VehicleId == id)
+                                        .Select(d => new DetailsViewModel 
+                                        { 
+                                            FirstName = d.Membership.FirstName,
+                                            LastName = d.Membership.LastName,
+                                            MemberNumber = d.Membership.MembershipId,
+                                            RegistrationNumber = d.RegistrationNumber,
+                                            VehicleTypeName = d.VehicleType.Type_Name
+                                            //ParkedTime = DateTime.Now - d.CheckedIn
+                                        })
+                                        .FirstOrDefaultAsync();
+
+            //var model = dbGarage.Garage
+            //    .Include(m => m.Memberships)
+            //    .Select(m => new DetailsViewModel
+            //    { 
+                    
+            //    })
+            //    .ThenInclude(v => v.Vehicles)
+            //    .ThenInclude(vt => vt.VehicleType)
+            //    .FirstOrDefaultAsync(g => g.GarageId == id);
+
+            return View(await model.ToListAsync());
         }
 
         // GET: Garages/Create
