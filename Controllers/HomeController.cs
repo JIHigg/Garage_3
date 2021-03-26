@@ -28,8 +28,8 @@ namespace Garage_3.Controllers
             {
                 viewModel.GarageName = garage.GarageName;
                 viewModel.NumberOfParkingPlaces = garage.NumberOfParkingPlaces;
-                viewModel.NumberOfVehiclesInGarage = _dbGarage_3.Vehicle.Count();
-                viewModel.Personnummer = _dbGarage_3.Personnummer;
+                //viewModel.NumberOfVehiclesInGarage = _dbGarage_3.Vehicle.Count();
+                //viewModel.Personnummer = _dbGarage_3.Personnummer;
             }
 
             return View(viewModel);

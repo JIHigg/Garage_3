@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Garage_3.Models.Entites
 {
@@ -42,9 +40,17 @@ namespace Garage_3.Models.Entites
         [Required(ErrorMessage = "Please Enter a Color")]
         public string Color { get; set; }
 
-        //[DisplayName("Time of Arrival")]
-        //public DateTime CheckIn { get; set; }
+        [DisplayName("Parking time")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}", NullDisplayText = "Undefined")]
+        public DateTime CheckInTime { get; set; }
 
+        [DisplayName("Leaving time")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}", NullDisplayText = "Undefined")]
+        public DateTime CheckOutTime { get; set; }
+
+        public bool IsParked { get; set; }
 
 
         //Navigation
@@ -57,7 +63,5 @@ namespace Garage_3.Models.Entites
         public VehicleType VehicleType { get; set; }
 
         public virtual ICollection<ParkingPlace> ParkingPlaces { get; set; }
-
-
     }
 }
