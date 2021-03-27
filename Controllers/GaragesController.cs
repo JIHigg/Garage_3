@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Garage_3.Data;
+using Garage_3.Models.Entites;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Garage_3.Data;
-using Garage_3.Models.Entites;
 
 namespace Garage_3.Controllers
 {
