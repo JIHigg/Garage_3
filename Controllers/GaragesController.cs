@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Garage_3.Data;
+using Garage_3.Models.Entites;
+using Garage_3.ViewModels;
+using Garage_3.Utils;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Garage_3.Data;
-using Garage_3.Models.Entites;
+using System;
 
 namespace Garage_3.Controllers
 {
@@ -137,12 +137,97 @@ namespace Garage_3.Controllers
         // POST: Garages/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)//Todo -Add to Remove action for Receipt
         {
-            var garage = await dbGarage.Garage.FindAsync(id);
-            dbGarage.Garage.Remove(garage);
+            ReceiptViewModel receipt = null;
+
+            var vehicle = await dbGarage.Vehicle.FindAsync(id);
+            if(vehicle != null)
+            {
+                var member = dbGarage.Membership
+                                .FirstOrDefault(m=>m.MembershipId == vehicle.MembershipId);
+                receipt = new ReceiptViewModel
+                {
+                    Id = vehicle.VehicleId,
+                    RegistrationNumber = vehicle.RegistrationNumber,
+                    MemberNumber = member.Personnummer,
+                    CheckIn = vehicle.CheckInTime,
+                    IsPro = member.IsPro
+                };
+            }
+
+            dbGarage.Vehicle.Update(vehicle);
             await dbGarage.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            TempData["message"] = $"You have unparked your {vehicle.VehicleType}!";
+            return View("Receipt", receipt);
+        }
+
+        //GET: Garages/Register   -new Membership
+        /// <summary>
+        /// Displays Member Registration Page
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult RegisterMember()
+        {
+            var model = new MembershipViewModel();
+            model.IsGarageFull = IsGarageFull();
+            return View(model);
+        }
+
+        //POST Garages/Register
+        /// <summary>
+        /// Adds valid Membership model to Database
+        /// </summary>
+        /// <param name="newMember"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RegisterMember([Bind("Personnummer,FirstName,LastName,Address,PostNumber,City,IsPro")] MembershipViewModel newMember)
+        {
+            if (ModelState.IsValid)
+            {
+                Membership member = new Membership
+                {
+                    Personnummer = newMember.Personnummer,
+                    FirstName = newMember.FirstName,
+                    LastName = newMember.LastName,
+                    RegistrationDate = DateTime.Now,
+                    Birthdate = VehicleHelper.ConvertBirthdayFromPersonnummer(newMember.Personnummer),
+                    Address = newMember.Address,
+                    PostNumber = newMember.PostNumber,
+                    City = newMember.City,
+                    IsPro = newMember.IsPro
+                };
+                dbGarage.Membership.Add(member);
+                await dbGarage.SaveChangesAsync();
+                TempData["message"] = $"Thank you, {member.FirstName} for joining our garage! Enjoy your 30 days of free Pro Membership!";
+                return RedirectToAction(nameof(Index));
+
+            }
+
+            return View(newMember);
+        }
+
+        /// <summary>
+        /// Method check i garage is full or not
+        /// </summary>
+        /// <returns>true if garage is full. Else false</returns>
+        private bool IsGarageFull()
+        {
+            bool bFull = false;
+            int iNumberOfFreeParkingPlaces = 0;
+
+            // Hämta antal fordon i garaget
+            int numberOfVehicles = dbGarage.Vehicle.Count();
+
+            // Hämta garaget
+            var garage = dbGarage.Garage.FirstOrDefault();
+            if (garage != null)
+                iNumberOfFreeParkingPlaces = garage.NumberOfParkingPlaces - numberOfVehicles;
+
+            bFull = iNumberOfFreeParkingPlaces <= 0 ? true : false;
+            return bFull;
         }
 
         private bool GarageExists(int id)

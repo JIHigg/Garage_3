@@ -62,7 +62,7 @@ namespace Garage_3.Models.Entites
         [Required(ErrorMessage ="Hourly Rate is required")]
         [DisplayFormat(DataFormatString = "{0:C}")]
         public decimal Hourly_Rate { get; set; }
-
+        public bool IsPro { get; set; }//Todo Validate and Add-Migration
 
         //Navigation
         [ForeignKey("Garage")]

@@ -1,4 +1,5 @@
 ﻿using Garage_3.ViewModels;
+using Garage_3.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,8 @@ namespace Garage_3.Utils
     /// </summary>
     public class VehicleHelper
     {
+        
+
         /// <summary>
         /// Method sort list of vehicles by registrationsnumber
         /// Sorting order decides by sortOrder
@@ -171,11 +174,34 @@ namespace Garage_3.Utils
             return (double)(minutes * pricePerMinute);
         }
 
-        public static DateTime CalculateAge(string personnummer) 
+        public static int CalculateAge(string personnummer) 
         {
-            string date = personnummer.ToCharArray(0, 7).ToString();
-            TimeSpan age = (DateTime.Now - DateTime.Parse(date));
-            int years = age.
+            //Creating birthday from Personnummer
+            string bdYear = personnummer.ToCharArray(0, 4).ToString();
+            string bdMonth = personnummer.ToCharArray(4, 2).ToString();
+            string bdDay = personnummer.ToCharArray(6, 2).ToString();
+            string bdayString = $"{bdYear}/{bdMonth}/{bdDay}";
+            DateTime Birthday = DateTime.Parse(bdayString);
+
+            //Calculate Age
+            var today = DateTime.Today;
+            var age = today.Year - Birthday.Year;
+            if (Birthday.DayOfYear < today.DayOfYear)
+                age--;
+            return age;
         }
+
+        public static DateTime ConvertBirthdayFromPersonnummer(string personnummer)
+        {
+            //Creating birthday from Personnummer
+            string bdYear = personnummer.Substring(0,4);
+            string bdMonth = personnummer.Substring(4,2);
+            string bdDay = personnummer.Substring(6,2);
+            string bdayString = $"{bdYear}/{bdMonth}/{bdDay}";
+            DateTime Birthday = DateTime.Parse(bdayString);
+            return Birthday;
+        }
+
+
     }
 }
