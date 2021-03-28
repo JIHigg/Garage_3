@@ -55,14 +55,15 @@ namespace Garage_3.Models.Entites
         [StringLength(30, ErrorMessage ="City cannot be more than 30 characters")]
         public string City { get; set; }
 
-        [Required(ErrorMessage ="Base Rate is required")]
+        [Required(ErrorMessage = "Base Rate is required")]
         [DisplayFormat(DataFormatString = "{0:C}")]
-        public decimal Base_Rate { get; set; }
+        public decimal Base_Rate = 50;
 
-        [Required(ErrorMessage ="Hourly Rate is required")]
+        [Required(ErrorMessage = "Hourly Rate is required")]
         [DisplayFormat(DataFormatString = "{0:C}")]
-        public decimal Hourly_Rate { get; set; }
-        public bool IsPro { get; set; }//Todo Validate and Add-Migration
+        public decimal Hourly_Rate = 30;
+
+        public bool StayPro { get; set; }
 
         //Navigation
         [ForeignKey("Garage")]

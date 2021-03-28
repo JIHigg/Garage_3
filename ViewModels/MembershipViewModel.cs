@@ -58,6 +58,6 @@ namespace Garage_3.ViewModels
         [DisplayFormat(DataFormatString = "{0:C}")]
         public decimal Hourly_Rate { get; set; }
 
-        public bool IsPro { get; set; }
+        public bool StayPro { get; set; }
     }
 }

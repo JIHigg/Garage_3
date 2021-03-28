@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Garage_3.Utils;
+using System.ComponentModel.DataAnnotations;
 
 namespace Garage_3.ViewModels
 {
@@ -14,6 +15,7 @@ namespace Garage_3.ViewModels
         public string MemberNumber { get; set; }
         public string Type { get; set; }
         public int VehicleSize { get; set; }
+        public int MemberSpaces { get; set; }
         public DateTime CheckIn { get; set; }
         public DateTime CheckOut = DateTime.Now;
         public string ParkedTime {
@@ -22,35 +24,56 @@ namespace Garage_3.ViewModels
                 return VehicleHelper.CalculateParkedTime(CheckIn);
             } }
 
-        public double BasePrice = 1.2;
-        public double HourlyRate = 2.3;
+        public double BasePrice = 50;
+        public double HourlyRate = 30;
+        public bool StayPro { get; set; }
 
+        [DisplayFormat(DataFormatString = "{0:C}")]
         public double ProDiscount
         {
             get
             {
-                double discount = 0;
+                double discount = 1;
                 if (IsPro)
                 {
-                    discount = VehicleSize * 0.1;
+                    
+                    discount = Math.Min(0.4,( MemberSpaces * 0.1));
                 }
                     
                 return discount;                    
             }
         }
-        public double ProSavings { get; set; }//Todo Fix Savings
+        [DisplayFormat(DataFormatString = "{0:C}")]
+        public double ProSavings
+        { get
+            {
+                double savings = 0;
+                TimeSpan parkedTime = CheckOut - CheckIn;
+                double timeParked = parkedTime.TotalHours;
 
 
+                if(IsPro)
+                 savings = (BasePrice + (HourlyRate * timeParked))- TotalPrice ;
+                return savings;
+            }
+        }//Todo Fix Savings
 
+
+        [DisplayFormat(DataFormatString = "{0:C}")]
         public double TotalPrice//Todo Fix Discounts for Membership
         { get
             {
-                
                 TimeSpan parkedTime = CheckOut - CheckIn;
-                double hoursParked = parkedTime.TotalHours;
-                double price = BasePrice + (HourlyRate * hoursParked);
                 
-                    
+                double hoursParked = parkedTime.TotalHours;
+                double sizeCharge = 1;
+                double sizeDiscount = 1;
+                if (VehicleSize > 1)
+                {
+                    sizeDiscount = 0.1;
+                    sizeCharge = 1 + (0.3 * (VehicleSize - 1));
+                }  
+                double price = (BasePrice*sizeCharge) + ((HourlyRate * hoursParked)*sizeDiscount);
                 return price;
             }
         }

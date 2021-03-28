@@ -139,6 +139,8 @@ namespace Garage_3.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)//Todo -Add to Remove action for Receipt
         {
+
+            //Create Receipt
             ReceiptViewModel receipt = null;
 
             var vehicle = await dbGarage.Vehicle.FindAsync(id);
@@ -152,7 +154,11 @@ namespace Garage_3.Controllers
                     RegistrationNumber = vehicle.RegistrationNumber,
                     MemberNumber = member.Personnummer,
                     CheckIn = vehicle.CheckInTime,
-                    IsPro = member.IsPro
+                    StayPro = member.StayPro,
+                    IsPro = VehicleHelper.IsPro(member),
+                    MemberSpaces = dbGarage.Vehicle.Where(v => v.IsParked && v.MembershipId == member.MembershipId)
+                                                   .Select(v => v.VehicleType.Size)
+                                                   .Count()
                 };
             }
 
@@ -197,7 +203,7 @@ namespace Garage_3.Controllers
                     Address = newMember.Address,
                     PostNumber = newMember.PostNumber,
                     City = newMember.City,
-                    IsPro = newMember.IsPro
+                    StayPro = newMember.StayPro
                 };
                 dbGarage.Membership.Add(member);
                 await dbGarage.SaveChangesAsync();
@@ -207,6 +213,33 @@ namespace Garage_3.Controllers
             }
 
             return View(newMember);
+        }
+
+        
+        public IActionResult Login()
+        {
+            var model = new LoginViewModel();
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public IActionResult Login(string personnummer)
+        {
+            if (ModelState.IsValid)
+            {
+                var member = dbGarage.Membership.FirstOrDefault(m => m.Personnummer == personnummer);
+
+                if (member == null)
+                {
+                    RedirectToAction("RegisterMember");
+                }
+                else
+                {
+                    RedirectToAction("Details");
+                }
+            }
+            return View(personnummer);
         }
 
         /// <summary>

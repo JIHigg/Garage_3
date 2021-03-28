@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Garage_3.Models.Entites;
 
 namespace Garage_3.Utils
 {
@@ -162,7 +163,25 @@ namespace Garage_3.Utils
             return strBuild.ToString();
         }
 
-        
+        /// <summary>
+        /// Determines if Member is ProMembership
+        /// </summary>
+        /// <param name="member"></param>
+        /// <returns></returns>
+        internal static bool IsPro(Membership member)
+        {
+            DateTime now = DateTime.Now;
+            int Age = now.Year - member.Birthdate.Year;
+            bool freeTrial =  (now.DayOfYear - member.RegistrationDate.DayOfYear < 30) ;
+            bool oldAge = 64 < Age && Age > 67 ;
+            bool Pro = false;
+            
+
+            if (member.StayPro || oldAge|| freeTrial)
+                Pro = true;
+            return Pro;
+        }
+
         internal static double CalculatePrice(DateTime dtParkedTime)
         {
             DateTime dtNow = DateTime.Now;
