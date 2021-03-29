@@ -48,12 +48,12 @@ namespace Garage_3.Controllers
                                         .Where(i => i.VehicleId == id)
                                         .Select(d => new DetailsViewModel 
                                         { 
+                                            Id = d.VehicleId,
                                             FirstName = d.Membership.FirstName,
                                             LastName = d.Membership.LastName,
                                             MemberNumber = d.Membership.MembershipId,
                                             RegistrationNumber = d.RegistrationNumber,
-                                            VehicleTypeName = d.VehicleType.Type_Name
-                                            //ParkedTime = DateTime.Now - d.CheckedIn
+                                            VehicleTypeName = d.VehicleType.Type_Name,
                                         })
                                         .FirstOrDefaultAsync();
 
@@ -161,15 +161,60 @@ namespace Garage_3.Controllers
             return View(garage);
         }
 
+        // GET: Garages/Delete/5
+        /// <summary>
+        /// TO do list:
+        /// 1) Find the vehicle with that id
+        /// 2) change it's parked properties to be falsed
+        /// 3) Find the parking spot the vehicle is connected to
+        /// 4) Make sure that there is not connection between the ParkingPlace and Vehicle
+        /// 5) Change the ocuppied properties to null
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> UnParked(int? id)
+        {
+
+            id = 1;
+            // Find the vehicle id
+            var vehicle = await dbGarage.Vehicle.FirstOrDefaultAsync(m => m.VehicleId == id);
+            vehicle.IsParked = false; 
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var garage = await dbGarage.Garage
+                .FirstOrDefaultAsync(m => m.GarageId == id);
+            if (garage == null)
+            {
+                return NotFound();
+            }
+
+            
+
+            if (vehicle == null)
+            {
+                return NotFound();
+            }
+
+            return View(garage);
+        }
+
+
+
         // POST: Garages/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+
             var garage = await dbGarage.Garage.FindAsync(id);
             dbGarage.Garage.Remove(garage);
             await dbGarage.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+            
         }
 
         private bool GarageExists(int id)
