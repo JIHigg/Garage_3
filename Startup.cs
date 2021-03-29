@@ -29,7 +29,7 @@ namespace Garage_3
 
             services.AddDbContext<Garage_3Context>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("Garage_3Context")));
-           // options.UseSqlServer(Configuration.GetConnectionString("Garage_3ContextHome")));            
+            //options.UseSqlServer(Configuration.GetConnectionString("Garage_3ContextHome")));            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

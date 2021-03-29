@@ -1,6 +1,7 @@
 ﻿using Garage_3.Models.Entites;
 using Microsoft.EntityFrameworkCore;
 using System;
+using Garage_3.ViewModels;
 
 namespace Garage_3.Data
 {
@@ -326,6 +327,8 @@ namespace Garage_3.Data
         public DbSet<ParkingPlace> ParkingPlace { get; set; }
         public DbSet<Vehicle> Vehicle { get; set; }
         public DbSet<VehicleType> VehicleType { get; set; }
+        public DbSet<Garage_3.ViewModels.DetailsViewModel> DetailsViewModel { get; set; }
+        public DbSet<Garage_3.ViewModels.ReceiptViewModel> ReceiptViewModel { get; set; }
 
     }
 }

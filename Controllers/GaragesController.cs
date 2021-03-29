@@ -1,5 +1,7 @@
 ﻿using Garage_3.Data;
 using Garage_3.Models.Entites;
+using Garage_3.Models;
+using Garage_3.ViewModels;
 using Garage_3.ViewModels;
 using Garage_3.Utils;
 using Microsoft.AspNetCore.Mvc;
@@ -40,7 +42,32 @@ namespace Garage_3.Controllers
                 return NotFound();
             }
 
-            return View(garage);
+            var model = dbGarage.Vehicle.Select(v => v)
+                                        .Include(m => m.Membership)
+                                        .Include(t => t.VehicleType)
+                                        .Where(i => i.VehicleId == id)
+                                        .Select(d => new DetailsViewModel 
+                                        { 
+                                            Id = d.VehicleId,
+                                            FirstName = d.Membership.FirstName,
+                                            LastName = d.Membership.LastName,
+                                            MemberNumber = d.Membership.MembershipId,
+                                            RegistrationNumber = d.RegistrationNumber,
+                                            VehicleTypeName = d.VehicleType.Type_Name,
+                                        })
+                                        .FirstOrDefaultAsync();
+
+            //var model = dbGarage.Garage
+            //    .Include(m => m.Memberships)
+            //    .Select(m => new DetailsViewModel
+            //    { 
+                    
+            //    })
+            //    .ThenInclude(v => v.Vehicles)
+            //    .ThenInclude(vt => vt.VehicleType)
+            //    .FirstOrDefaultAsync(g => g.GarageId == id);
+
+            return View(await model);
         }
 
         // GET: Garages/Create
@@ -133,6 +160,49 @@ namespace Garage_3.Controllers
 
             return View(garage);
         }
+
+        // GET: Garages/Delete/5
+        /// <summary>
+        /// TO do list:
+        /// 1) Find the vehicle with that id
+        /// 2) change it's parked properties to be falsed
+        /// 3) Find the parking spot the vehicle is connected to
+        /// 4) Make sure that there is not connection between the ParkingPlace and Vehicle
+        /// 5) Change the ocuppied properties to null
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> UnParked(int? id)
+        {
+
+            id = 1;
+            // Find the vehicle id
+            var vehicle = await dbGarage.Vehicle.FirstOrDefaultAsync(m => m.VehicleId == id);
+            vehicle.IsParked = false; 
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var garage = await dbGarage.Garage
+                .FirstOrDefaultAsync(m => m.GarageId == id);
+            if (garage == null)
+            {
+                return NotFound();
+            }
+
+            
+
+            if (vehicle == null)
+            {
+                return NotFound();
+            }
+
+            return View(garage);
+        }
+
+
 
         // POST: Garages/Delete/5
         [HttpPost, ActionName("Delete")]
@@ -275,5 +345,6 @@ namespace Garage_3.Controllers
         {
             return dbGarage.Garage.Any(e => e.GarageId == id);
         }
+
     }
 }

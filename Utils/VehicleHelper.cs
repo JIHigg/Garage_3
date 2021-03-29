@@ -56,7 +56,7 @@ namespace Garage_3.Utils
             {
                 if (String.IsNullOrWhiteSpace(sortOrder))
                     sortOrder = "asc";
-
+        
                 if (sortOrder.Equals("desc"))
                     lsSortedVehicles = lsVehicles.OrderByDescending(r => r.TimeOfArrival).ToList();
                 else
