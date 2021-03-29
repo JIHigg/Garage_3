@@ -1,14 +1,12 @@
 ﻿using Garage_3.Data;
 using Garage_3.Models.Entites;
-using Garage_3.Models;
-using Garage_3.ViewModels;
-using Garage_3.ViewModels;
 using Garage_3.Utils;
+using Garage_3.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using System;
 
 namespace Garage_3.Controllers
 {
@@ -161,7 +159,7 @@ namespace Garage_3.Controllers
             return View(garage);
         }
 
-        // GET: Garages/Delete/5
+        // GET: Garages/UnParked/5
         /// <summary>
         /// TO do list:
         /// 1) Find the vehicle with that id
@@ -205,9 +203,9 @@ namespace Garage_3.Controllers
 
 
         // POST: Garages/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("UnParked")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)//Todo -Add to Remove action for Receipt
+        public async Task<IActionResult> UnparkConfirmed(int id)//Todo -Add to Remove action for Receipt
         {
 
             //Create Receipt
