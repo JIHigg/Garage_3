@@ -10,8 +10,8 @@
 <hr />
 <div class="row">
 
-    @if (!Model.IsGarageFull)
-    {
+    
+    
         <div class="col-md-4 col-sm-4">
             <form asp-action="RegisterMember">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -60,13 +60,8 @@
                 </div>
             </form>
         </div>
-    }
-    else
-    {
-        <div class="col-md-4 col-sm-4">
-            <p>Garage is full</p>
-        </div>
-    }
+    
+    
 </div>
 
 <div>

@@ -232,14 +232,14 @@ namespace Garage_3.Controllers
 
                 if (member == null)
                 {
-                    RedirectToAction("RegisterMember");
+                    return View("RegisterMember");
                 }
                 else
                 {
-                    RedirectToAction("Details");
+                    return RedirectToAction("Index");
                 }
             }
-            return View(personnummer);
+            return View("Login");
         }
 
         /// <summary>
@@ -263,6 +263,14 @@ namespace Garage_3.Controllers
             return bFull;
         }
 
+
+        public JsonResult CompareFirstName(string fName, string lName)
+        {
+            bool match = false;
+            if (fName.ToLower() == lName.ToLower())
+                match = true;
+            return Json(match);
+        }
         private bool GarageExists(int id)
         {
             return dbGarage.Garage.Any(e => e.GarageId == id);

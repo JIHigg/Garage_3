@@ -67,7 +67,7 @@ namespace Garage_3.Models.Entites
 
         //Navigation
         [ForeignKey("Garage")]
-        public int GarageId { get; set; }
+        public int GarageId = 1;
 
         public Garage Garage { get; set; }
         public virtual ICollection<Vehicle> Vehicles { get; set; }
