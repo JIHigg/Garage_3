@@ -197,7 +197,7 @@ namespace Garage_3.Controllers
                 return NotFound();
             }
 
-            return View(garage);
+            return View(vehicle);
         }
 
 
@@ -205,13 +205,13 @@ namespace Garage_3.Controllers
         // POST: Garages/Delete/5
         [HttpPost, ActionName("UnParked")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UnparkConfirmed(int id)//Todo -Add to Remove action for Receipt
+        public async Task<IActionResult> UnparkConfirmed(int? Vehicleid)//Todo -Add to Remove action for Receipt
         {
 
             //Create Receipt
             ReceiptViewModel receipt = null;
 
-            var vehicle = await dbGarage.Vehicle.FindAsync(id);
+            var vehicle = await dbGarage.Vehicle.FindAsync(Vehicleid);
             if(vehicle != null)
             {
                 var member = dbGarage.Membership
@@ -228,12 +228,13 @@ namespace Garage_3.Controllers
                                                    .Select(v => v.VehicleType.Size)
                                                    .Count()
                 };
-            }
 
             dbGarage.Vehicle.Update(vehicle);
             await dbGarage.SaveChangesAsync();
             TempData["message"] = $"You have unparked your {vehicle.VehicleType}!";
             return View("Receipt", receipt);
+            }
+            return View();
         }
 
         //GET: Garages/Register   -new Membership
