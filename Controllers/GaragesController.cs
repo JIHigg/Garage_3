@@ -1,5 +1,7 @@
 ﻿using Garage_3.Data;
 using Garage_3.Models.Entites;
+using Garage_3.Models.ViewModel;
+using Garage_3.Services;
 using Garage_3.Utils;
 using Garage_3.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -12,17 +14,23 @@ namespace Garage_3.Controllers
 {
     public class GaragesController : Controller
     {
+        private readonly IParkVehicleService m_ParkVehicleService;
+        private readonly IMemberShipService m_MemberShipService;
         private readonly Garage_3Context dbGarage;
 
-        public GaragesController(Garage_3Context context)
+        public GaragesController(Garage_3Context context, IParkVehicleService parkVehicleService, IMemberShipService memberShipService)
         {
+            m_ParkVehicleService = parkVehicleService;
+            m_MemberShipService = memberShipService;
             dbGarage = context;
         }
 
         // GET: Garages
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await dbGarage.Garage.ToListAsync());
+            GetMessageFromTempData();
+
+            return View(dbGarage.Garage.ToList());
         }
 
         // GET: Garages/Details/5
@@ -343,6 +351,246 @@ namespace Garage_3.Controllers
         private bool GarageExists(int id)
         {
             return dbGarage.Garage.Any(e => e.GarageId == id);
+        }
+
+        #region Create a new vehicle and park it
+        public async Task<IActionResult> AddNewVehicleType([Bind("NewVehicleType", "NewVehicleTypeSize", "RegistrationNumber", "NumberOfWheels", "Year", "Model", "Make", "Color", "VehicleTypesId", "MembershipId", "MemberName")] ParkVehicleCreateViewModel parkVehicleCreateViewModel)
+        {
+            bool bVehicleTypeExist = m_ParkVehicleService.IsVehicleTypeExisting(parkVehicleCreateViewModel.NewVehicleType);
+
+            if (bVehicleTypeExist)
+            {
+                TempData["message"] = "Vehicle type already exist";
+                TempData["typeOfMessage"] = "error";
+
+                //var member = await dbGarage.Membership.Where(i => i.MembershipId == parkVehicleCreateViewModel.MembershipId).FirstOrDefaultAsync();
+
+                // Set up viewbag with messages
+                GetMessageFromTempData();
+
+                var model = new ParkVehicleCreateViewModel();
+                model.VehicleId = parkVehicleCreateViewModel.VehicleId;
+                model.VehicleTypesId = parkVehicleCreateViewModel.VehicleTypesId;
+                model.RegistrationNumber = parkVehicleCreateViewModel.RegistrationNumber;
+                model.NumberOfWheels = parkVehicleCreateViewModel.NumberOfWheels;
+                model.Year = parkVehicleCreateViewModel.Year;
+                model.Model = parkVehicleCreateViewModel.Model;
+                model.Make = parkVehicleCreateViewModel.Make;
+                model.Color = parkVehicleCreateViewModel.Color;
+                model.NewVehicleType = parkVehicleCreateViewModel.NewVehicleType;
+                model.NewVehicleTypeSize = parkVehicleCreateViewModel.NewVehicleTypeSize;
+                model.MemberName = parkVehicleCreateViewModel.MemberName;
+
+                //if (member != null)
+                //    model.MemberName = member.FirstName + " " + member.LastName;
+
+                model.MembershipId = parkVehicleCreateViewModel.MembershipId;
+                model.ParkingPlaceId = parkVehicleCreateViewModel.ParkingPlaceId;
+                model.MembershipId = parkVehicleCreateViewModel.MembershipId;
+                model.VehicleTypes = m_ParkVehicleService.CreateVehicleTypeDropDown();
+                model.IsGarageFull = m_ParkVehicleService.IsGarageFull();
+                model.FreeParkingPlaces = m_ParkVehicleService.CreateFreeParkingPlaceDropDown();
+
+                return View(nameof(ParkNewVehicle), model);
+            }
+
+            VehicleType vehicleType = new VehicleType();
+            vehicleType.Size = 1;// TODO. Size is optional. parkVehicleCreateViewModel.NewVehicleTypeSize;
+            vehicleType.Type_Name = parkVehicleCreateViewModel.NewVehicleType;
+            dbGarage.VehicleType.Add(vehicleType);
+            dbGarage.SaveChanges();
+
+            TempData["message"] = $"Has added Vehicle type {parkVehicleCreateViewModel.NewVehicleType}";
+            TempData["typeOfMessage"] = "info";
+
+            return RedirectToAction(nameof(ParkNewVehicle));
+        }
+
+
+        public async Task<IActionResult> ParkCreatedVehicle([Bind("MembershipId", "ParkingPlaceId", "RegistrationNumber", "NumberOfWheels", "Year", "Model", "Make", "Color", "VehicleTypesId")] ParkVehicleCreateViewModel parkVehicleCreateViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var parkingPlace = await dbGarage.ParkingPlace.Where(i => i.ParkingPlaceId == parkVehicleCreateViewModel.ParkingPlaceId).FirstOrDefaultAsync();
+                if (parkingPlace != null)
+                {
+                    Vehicle vehicle = new Vehicle();
+                    vehicle.RegistrationNumber = parkVehicleCreateViewModel.RegistrationNumber;
+                    vehicle.NumberOfWheels = parkVehicleCreateViewModel.NumberOfWheels;
+                    vehicle.Year = parkVehicleCreateViewModel.Year;
+                    vehicle.Model = parkVehicleCreateViewModel.Model;
+                    vehicle.Make = parkVehicleCreateViewModel.Make;
+                    vehicle.Color = parkVehicleCreateViewModel.Color;
+                    vehicle.CheckInTime = DateTime.Now;
+                    vehicle.IsParked = true;
+                    vehicle.MembershipId = parkVehicleCreateViewModel.MembershipId;
+                    vehicle.VehicleTypeId = parkVehicleCreateViewModel.VehicleTypesId;
+                    vehicle.CheckInTime = DateTime.Now;
+
+                    // TODO. För närvarande kan ett fordon bara parkera i en parkeringsplats. Flera platser är överkurs..
+                    vehicle.ParkingPlaceId = parkVehicleCreateViewModel.ParkingPlaceId;
+
+                    try
+                    {
+                        dbGarage.Vehicle.Add(vehicle);
+                        await dbGarage.SaveChangesAsync();
+
+                        parkingPlace.IsOccupied = true;
+                        parkingPlace.VehicleId = vehicle.VehicleId;
+                        await dbGarage.SaveChangesAsync();
+
+                        TempData["message"] = "You have parked vehicle " + parkVehicleCreateViewModel.RegistrationNumber;
+                        TempData["typeOfMessage"] = "info";
+
+                        return RedirectToAction(nameof(Index));
+                    }
+                    catch (Exception e)
+                    {
+                    }
+                }
+
+                TempData["message"] = "We cant park vehicle";
+                TempData["typeOfMessage"] = "error";
+            }
+
+            return RedirectToAction(nameof(ParkNewVehicle));
+        }
+
+        public async Task<IActionResult> ParkNewVehicle(int MembershipId)
+        {
+            // Set up viewbag with messages
+            GetMessageFromTempData();
+
+            var model = new ParkVehicleCreateViewModel();
+
+            var member = await dbGarage.Membership.Where(i => i.MembershipId == MembershipId).FirstOrDefaultAsync();
+            if (member != null)
+                model.MemberName = member.FirstName + " " + member.LastName;
+
+            model.MembershipId = MembershipId;
+            model.VehicleTypes = m_ParkVehicleService.CreateVehicleTypeDropDown();
+            model.IsGarageFull = m_ParkVehicleService.IsGarageFull();
+            model.FreeParkingPlaces = m_ParkVehicleService.CreateFreeParkingPlaceDropDown();
+
+            return View(model);
+        }
+
+        #endregion // End of region Create a new vehicle and park it
+
+        #region Park a vehicle that already exist in database
+        /// <summary>
+        /// Fourth step of parking a vehicle at a parking place
+        /// Now member has selected vehicle and parking place. Time to park and save to database
+        /// </summary>
+        /// <param name="parkVehicleSelectParkingPlaceViewModel"></param>
+        /// <returns>View</returns>
+        public async Task<IActionResult> ParkTheVehicle([Bind("ParkingPlaceId", "MembershipId", "VehicleId")] ParkVehicleSelectParkingPlaceViewModel parkVehicleSelectParkingPlaceViewModel)
+        {
+            var vehicle = await dbGarage.Vehicle.Where(i => i.VehicleId == parkVehicleSelectParkingPlaceViewModel.VehicleId).FirstOrDefaultAsync();
+            var parkingPlace = await dbGarage.ParkingPlace.Where(i => i.ParkingPlaceId == parkVehicleSelectParkingPlaceViewModel.ParkingPlaceId).FirstOrDefaultAsync();
+
+            if (vehicle != null && parkingPlace != null)
+            {
+                // Update objects
+                vehicle.IsParked = true;
+                vehicle.CheckInTime = DateTime.Now;
+                vehicle.ParkingPlaceId = parkingPlace.ParkingPlaceId;
+                parkingPlace.IsOccupied = true;
+                parkingPlace.VehicleId = vehicle.VehicleId;
+
+                await dbGarage.SaveChangesAsync();
+
+                TempData["message"] = $"We have parked {vehicle.RegistrationNumber} at parking place {parkingPlace.ParkingPlaceId}";
+                TempData["typeOfMessage"] = "info";
+            }
+            else
+            {
+                TempData["message"] = $"We cant park {vehicle.RegistrationNumber}";
+                TempData["typeOfMessage"] = "error";
+            }
+
+            return View(nameof(Index));
+        }
+
+
+        /// <summary>
+        /// Third action when you want to park a vehicle
+        /// Now member has selected a vehicle. Now its time to select free parking place
+        /// </summary>
+        /// <param name="VehicleId">Id for selected vehicle</param>
+        /// <returns>View</returns>
+        public async Task<IActionResult> ParkVehicleSelectParkingPlace([Bind("VehicleId")] int VehicleId)
+        {
+            var vehicle = await dbGarage.Vehicle.Include("Membership").Where(v => v.VehicleId == VehicleId).FirstOrDefaultAsync();
+
+            var model = new ParkVehicleSelectParkingPlaceViewModel();
+            model.Vehicle = vehicle;
+            model.VehicleId = vehicle.VehicleId;
+            model.MemberShip = vehicle.Membership;
+            model.MemberName = vehicle.Membership.FirstName + " " + vehicle.Membership.LastName;
+            model.MembershipId = vehicle.Membership.MembershipId;
+            model.FreeParkingPlaces = m_ParkVehicleService.CreateFreeParkingPlaceDropDown();
+
+            return View("ParkVehicleSelectParkingPlace", model);
+        }
+
+        /// <summary>
+        /// Second action when you want to park a vehicle
+        /// Member shall select a vehicle that shall be parked
+        /// </summary>
+        /// <param name="parkVehicleSelectMemberViewModel"></param>
+        /// <returns>View</returns>
+        public async Task<IActionResult> ParkVehicleSelectVehicle([Bind("MemberShipId")] ParkVehicleSelectMemberViewModel parkVehicleSelectMemberViewModel)
+        {
+            var model = new ParkVehicleSelectVehicleViewModel();
+
+            // We already have client side validation of this
+            if (parkVehicleSelectMemberViewModel.MemberShipId <= 0)
+            {
+                var model1 = new ParkVehicleSelectMemberViewModel();
+                model1.Members = m_MemberShipService.CreateMemberDropDown();
+
+                ModelState.AddModelError("MemberShipId", "You have to select a membership");
+
+                return View("ParkVehicle", model1);
+            }
+            else
+            {
+                model.MemberShip = await dbGarage.Membership.Where(m => m.MembershipId == parkVehicleSelectMemberViewModel.MemberShipId).FirstOrDefaultAsync();
+                // Get all vehicle that is not parked
+                model.Vehicles = await dbGarage.Vehicle.Where(m => m.MembershipId == parkVehicleSelectMemberViewModel.MemberShipId && m.IsParked == false).ToListAsync();
+            }
+
+            return View(model);
+        }
+
+
+        /// <summary>
+        /// First action when you want to park a vehicle
+        /// Here user select a membership
+        /// </summary>
+        /// <returns>View</returns>
+        public IActionResult ParkVehicle()
+        {
+            var model = new ParkVehicleSelectMemberViewModel();
+            model.Members = m_MemberShipService.CreateMemberDropDown();
+
+            return View(model);
+        }
+
+        #endregion // End of region Park a vehicle that already exist in database
+
+        private void GetMessageFromTempData()
+        {
+            var messageObject = TempData["message"];
+            if (messageObject != null)
+                ViewBag.Message = messageObject as string;
+
+            var typeOfMessageObject = TempData["typeOfMessage"];
+            if (typeOfMessageObject != null)
+                ViewBag.TypeOfMessage = typeOfMessageObject as string;
+            else
+                ViewBag.TypeOfMessage = "info";
         }
 
     }
