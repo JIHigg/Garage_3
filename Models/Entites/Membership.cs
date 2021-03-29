@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Garage_3.Models.Entites
 {
@@ -67,7 +65,7 @@ namespace Garage_3.Models.Entites
 
         //Navigation
         [ForeignKey("Garage")]
-        public int GarageId = 1;
+        public int GarageId { get; set; }
 
         public Garage Garage { get; set; }
         public virtual ICollection<Vehicle> Vehicles { get; set; }
