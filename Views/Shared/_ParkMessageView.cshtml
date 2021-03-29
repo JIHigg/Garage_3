@@ -1,0 +1,8 @@
+﻿@model Garage_3.Models.ViewModel.ParkVehicleCreateViewModel
+
+@if (Model.IsGarageFull)
+{
+    <div class="alert alert-danger" role="alert">
+        Garage is full!
+    </div>
+}

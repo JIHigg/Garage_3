@@ -4,14 +4,16 @@ using Garage_3.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Garage_3.Migrations
 {
     [DbContext(typeof(Garage_3Context))]
-    partial class Garage_3ContextModelSnapshot : ModelSnapshot
+    [Migration("20210329162539_updates")]
+    partial class updates
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -105,56 +107,56 @@ namespace Garage_3.Migrations
                         {
                             MembershipId = 1,
                             Address = "123 Johan St",
-                            Birthdate = new DateTime(1991, 3, 29, 18, 50, 9, 889, DateTimeKind.Local).AddTicks(2575),
+                            Birthdate = new DateTime(1991, 3, 29, 18, 25, 38, 704, DateTimeKind.Local).AddTicks(1329),
                             City = "Stockholm",
                             FirstName = "Kalle",
                             GarageId = 1,
                             LastName = "Anka",
                             Personnummer = "198706051234",
                             PostNumber = "11111",
-                            RegistrationDate = new DateTime(2021, 3, 29, 18, 50, 9, 884, DateTimeKind.Local).AddTicks(9264),
+                            RegistrationDate = new DateTime(2021, 3, 29, 18, 25, 38, 700, DateTimeKind.Local).AddTicks(830),
                             StayPro = false
                         },
                         new
                         {
                             MembershipId = 2,
                             Address = "123 Johan St",
-                            Birthdate = new DateTime(1971, 3, 29, 18, 50, 9, 889, DateTimeKind.Local).AddTicks(5713),
+                            Birthdate = new DateTime(1971, 3, 29, 18, 25, 38, 704, DateTimeKind.Local).AddTicks(4375),
                             City = "Bag End",
                             FirstName = "Frodo",
                             GarageId = 1,
                             LastName = "Baggins",
                             Personnummer = "198706051234",
                             PostNumber = "22222",
-                            RegistrationDate = new DateTime(2021, 3, 29, 18, 50, 9, 889, DateTimeKind.Local).AddTicks(5679),
+                            RegistrationDate = new DateTime(2021, 3, 29, 18, 25, 38, 704, DateTimeKind.Local).AddTicks(4341),
                             StayPro = false
                         },
                         new
                         {
                             MembershipId = 3,
                             Address = "123 Johan St",
-                            Birthdate = new DateTime(1956, 3, 29, 18, 50, 9, 889, DateTimeKind.Local).AddTicks(5757),
+                            Birthdate = new DateTime(1956, 3, 29, 18, 25, 38, 704, DateTimeKind.Local).AddTicks(4414),
                             City = "Hobbiton",
                             FirstName = "Samwise",
                             GarageId = 1,
                             LastName = "Gamgee",
                             Personnummer = "198706051234",
                             PostNumber = "33333",
-                            RegistrationDate = new DateTime(2021, 3, 29, 18, 50, 9, 889, DateTimeKind.Local).AddTicks(5743),
+                            RegistrationDate = new DateTime(2021, 3, 29, 18, 25, 38, 704, DateTimeKind.Local).AddTicks(4399),
                             StayPro = false
                         },
                         new
                         {
                             MembershipId = 4,
                             Address = "123 Johan St",
-                            Birthdate = new DateTime(1951, 3, 29, 18, 50, 9, 889, DateTimeKind.Local).AddTicks(5791),
+                            Birthdate = new DateTime(1951, 3, 29, 18, 25, 38, 704, DateTimeKind.Local).AddTicks(4448),
                             City = "Stockholm",
                             FirstName = "Meriadoc",
                             GarageId = 1,
                             LastName = "Brandybuck",
                             Personnummer = "198706051234",
                             PostNumber = "44444",
-                            RegistrationDate = new DateTime(2017, 3, 29, 18, 50, 9, 889, DateTimeKind.Local).AddTicks(5777),
+                            RegistrationDate = new DateTime(2017, 3, 29, 18, 25, 38, 704, DateTimeKind.Local).AddTicks(4434),
                             StayPro = false
                         });
                 });
@@ -385,9 +387,6 @@ namespace Garage_3.Migrations
                         .HasColumnType("nvarchar(40)");
 
                     b.Property<int>("NumberOfWheels")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ParkingPlaceId")
                         .HasColumnType("int");
 
                     b.Property<string>("RegistrationNumber")

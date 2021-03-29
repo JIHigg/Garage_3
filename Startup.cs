@@ -1,15 +1,11 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Garage_3.Data;
+using Garage_3.Services;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Garage_3.Data;
 
 namespace Garage_3
 {
@@ -28,8 +24,13 @@ namespace Garage_3
             services.AddControllersWithViews();
 
             services.AddDbContext<Garage_3Context>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("Garage_3Context")));
-            //options.UseSqlServer(Configuration.GetConnectionString("Garage_3ContextHome")));            
+            //options.UseSqlServer(Configuration.GetConnectionString("Garage_3Context")));
+            options.UseSqlServer(Configuration.GetConnectionString("Garage_3ContextHome")));
+
+            // Add services
+            services.AddTransient<IParkVehicleService, ParkVehicleService>();
+
+            services.AddTransient<IMemberShipService, MemberShipService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
