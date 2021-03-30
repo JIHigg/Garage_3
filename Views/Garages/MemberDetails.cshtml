@@ -37,5 +37,14 @@
 </div>
 <div>
     <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Edit" asp-action="MemberEdit" asp-route-id="@Model.MembershipId">Edit</a>
-    <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="List members" asp-action="Members">Back to List of members</a>
+
+    <!-- HACK -->
+    @if (ViewBag.BackTo != null && ViewBag.BackTo == "ShowGarage")
+    {// Hack
+        <a asp-action="ShowGarage" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Back to garage">Back to garage</a>
+    }
+    else
+    {
+        <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="List members" asp-action="Members">Back to List of members</a>
+    }
 </div>

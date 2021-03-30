@@ -70,11 +70,14 @@ namespace Garage_3.Controllers
 
             var member = await dbGarage.Membership.Where(i => i.MembershipId == id).FirstOrDefaultAsync();
 
+            /*             // Hack
+            if (!String.IsNullOrWhiteSpace(backTo))
+                ViewBag.BackTo = backTo;*/
             return View(member);
         }
 
 
-        public async Task<IActionResult> MemberDetails(int? id)
+        public async Task<IActionResult> MemberDetails(int? id, string backTo)
         {
             if (id == null)
             {
@@ -97,6 +100,10 @@ namespace Garage_3.Controllers
                 TotalVehicles = dbGarage.Vehicle.Where(v=> v.MembershipId == member.MembershipId).Count(),
                 Vehicles = dbGarage.Vehicle.Where(v => v.MembershipId == member.MembershipId).ToList()
             };
+
+            // Hack
+            if (!String.IsNullOrWhiteSpace(backTo))
+                ViewBag.BackTo = backTo;
 
             return View( model);
         }
@@ -622,15 +629,6 @@ namespace Garage_3.Controllers
             return View(vehicle);
         }
 
-        [HttpPost]
-        public async Task<IActionResult>VehicleEdit(int id, string backTo)
-        {
-            // TODO
-            // asp-action="VehicleEdit" asp-route-backTo="vehicleList"
-
-            return View();
-        }
-
         public async Task<IActionResult> ParkedVehiclesSearchFor(string txtSearchRegistrationNumber, string txtSearchVehicleType)
         {
             // TODO Hard code to GarageId = 1
@@ -663,12 +661,61 @@ namespace Garage_3.Controllers
             return View("VehicleList", model);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> VehicleEdit(int VehicleId, string backTo, Vehicle vehicle)
+        {
+            Vehicle vehicle1 = await dbGarage.Vehicle.Where(i => i.VehicleId == VehicleId).FirstOrDefaultAsync();
+            if(vehicle1 != null)
+            {
+                vehicle1.Color = vehicle.Color;
+                vehicle1.Make = vehicle.Make;
+                vehicle1.Model = vehicle.Model;
+                vehicle1.NumberOfWheels = vehicle.NumberOfWheels;
+                vehicle1.Year = vehicle.Year;
 
-        public async Task<IActionResult> VehicleEdit(int id)
+                try
+                {
+                    await dbGarage.SaveChangesAsync();
+                    TempData["message"] = $"Updated Vehicle {vehicle1.RegistrationNumber}";
+                    TempData["typeOfMessage"] = "info";
+                }
+                catch(Exception)
+                {
+                    TempData["message"] = $"Cant updated Vehicle {vehicle1.RegistrationNumber}";
+                    TempData["typeOfMessage"] = "error";
+                }
+            }
+            else
+            {
+                TempData["message"] = $"Cant updated Vehicle {vehicle1.RegistrationNumber}";
+                TempData["typeOfMessage"] = "error";
+            }
+
+
+            //vehicleList
+            // Hack
+            if (!String.IsNullOrWhiteSpace(backTo))
+            {
+                if(backTo.Equals("vehicleList"))
+                    return RedirectToAction("VehicleList", "Garages");
+                else if(backTo.Equals("ShowGarage"))
+                    return RedirectToAction("ShowGarage", "Garages");
+            }
+
+            return RedirectToAction("Index", "Home");
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> VehicleEdit(int id, string backTo)
         {
             var vehicle = await dbGarage.Vehicle.Include("VehicleType").Where(i => i.VehicleId == id).FirstOrDefaultAsync();
 
-            return View(vehicle);
+            // Hack
+            if (!String.IsNullOrWhiteSpace(backTo))
+                ViewBag.BackTo = backTo;
+
+            return View("VehicleEdit", vehicle);
         }
 
         public IActionResult VehicleDetails(int id, string backTo)
@@ -776,6 +823,8 @@ namespace Garage_3.Controllers
 
         public async Task<IActionResult> VehicleList()
         {
+            GetMessageFromTempData();
+
             // TODO Hard code to GarageId = 1
             int iGarageId = 1;
 
@@ -1035,6 +1084,8 @@ namespace Garage_3.Controllers
 
         public async Task<IActionResult>ShowGarage()
         {
+            GetMessageFromTempData();
+
             // TODO Hard code to GarageId = 1
             int iGarageId = 1;
 

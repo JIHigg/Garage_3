@@ -8,6 +8,10 @@
 
 <h1>Show information about Garage</h1>
 
+@{
+    await Html.RenderPartialAsync("_MessageView");
+}
+
 <div>
     <h4>Garage</h4>
     <hr />
@@ -63,7 +67,7 @@
                         <td>@Html.DisplayFor(modelItem => item.RegistrationDate)</td>
                         <td>@Html.DisplayFor(modelItem => item.TypeOfMembersShip)</td>
                         <td>
-                            <a class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Membership Details" asp-action="MemberDetails" asp-route-id="@item.MembershipId">Details</a>
+                            <a class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Membership Details" asp-action="MemberDetails" asp-route-backTo="ShowGarage" asp-route-id="@item.MembershipId">Details</a>
                         </td>
                     </tr>
                 }
@@ -71,7 +75,7 @@
         </table>
     }
     else
-    {        
+    {
         <div>
             <hr />
             No members
@@ -81,8 +85,8 @@
 </div>
 
 <div>
-    <h4>Parked Vehicles</h4>  
-    
+    <h4>Parked Vehicles</h4>
+
     @if (Model.VehiclesInfo?.Count() > 0)
     {
         <table class="table">
@@ -100,17 +104,18 @@
             <tbody>
                 @foreach (var item in Model.VehiclesInfo)
                 {
-                <tr>
-                    <td>@Html.DisplayFor(modelItem => item.Make)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Model)</td>
-                    <td>@Html.DisplayFor(modelItem => item.RegistrationNumber)</td>
-                    <td>@Html.DisplayFor(modelItem => item.VehicleType)</td>
-                    <td>@Html.DisplayFor(modelItem => item.MemberName)</td>
-                    <td>@Html.DisplayFor(modelItem => item.ParkedTime)</td>
-                    <td>
-                        <a class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Vehicle Details" asp-action="VehicleDetails" asp-route-backTo="ShowGarage" asp-route-id="@item.VehicleId">Details</a>
-                    </td>
-                </tr>
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.Make)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Model)</td>
+                        <td>@Html.DisplayFor(modelItem => item.RegistrationNumber)</td>
+                        <td>@Html.DisplayFor(modelItem => item.VehicleType)</td>
+                        <td>@Html.DisplayFor(modelItem => item.MemberName)</td>
+                        <td>@Html.DisplayFor(modelItem => item.ParkedTime)</td>
+                        <td>
+                            <a class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Vehicle Details" asp-action="VehicleEdit" asp-route-backTo="ShowGarage" asp-route-id="@item.VehicleId">Edit</a>
+                            <a class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Vehicle Details" asp-action="VehicleDetails" asp-route-backTo="ShowGarage" asp-route-id="@item.VehicleId">Details</a>
+                        </td>
+                    </tr>
                 }
             </tbody>
         </table>
@@ -118,7 +123,7 @@
     else
     {
         <div>
-            <hr/>
+            <hr />
             No parked vehicles
         </div>
     }
