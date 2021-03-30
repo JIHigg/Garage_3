@@ -24,8 +24,8 @@ namespace Garage_3
             services.AddControllersWithViews();
 
             services.AddDbContext<Garage_3Context>(options =>
-            //options.UseSqlServer(Configuration.GetConnectionString("Garage_3Context")));
-            options.UseSqlServer(Configuration.GetConnectionString("Garage_3ContextHome")));
+            options.UseSqlServer(Configuration.GetConnectionString("Garage_3Context")));
+            //options.UseSqlServer(Configuration.GetConnectionString("Garage_3ContextHome")));
 
             // Add services
             services.AddTransient<IParkVehicleService, ParkVehicleService>();
