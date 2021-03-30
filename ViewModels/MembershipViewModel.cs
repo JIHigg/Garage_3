@@ -39,6 +39,22 @@ namespace Garage_3.ViewModels
         [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}")]
         public DateTime Birthdate { get; set; }
 
+        //[DisplayName("Age")]
+        //[Range(18,116, ErrorMessage ="Must be at least 18 to Register")]
+        //public int Age
+        //{
+        //    get
+        //    {
+        //        int age = (DateTime.Now.Year - Birthdate.Year);
+        //        if (Birthdate.DayOfYear> DateTime.Now.DayOfYear)
+        //        {
+        //            age--;
+        //        }
+
+        //        return age;
+        //    } 
+        //}
+
         [Required(ErrorMessage = "Please enter your Address")]
         [DisplayName("Street Address")]
         [StringLength(100, ErrorMessage = "Address must be less than 100 characters")]

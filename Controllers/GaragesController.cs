@@ -59,19 +59,7 @@ namespace Garage_3.Controllers
             return View( members);
         }
 
-        public async Task<IActionResult> MemberEdit(int? id)
-        {
-            // TODO
-
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var member = await dbGarage.Membership.Where(i => i.MembershipId == id).FirstOrDefaultAsync();
-
-            return View(member);
-        }
+        
 
 
         public async Task<IActionResult> MemberDetails(int? id)
@@ -268,15 +256,20 @@ namespace Garage_3.Controllers
                 return View("Members");
             }
 
-            var model = new MembersViewModel
+            var model = new MembershipViewModel
             {
+                MembershipId = member.MembershipId,
+                RegistrationDate = member.RegistrationDate,
+                Birthdate = member.Birthdate,
+                Personnummer = member.Personnummer,
                 FirstName = member.FirstName,
                 LastName = member.LastName,
-                MembershipId = member.MembershipId,
-                Name = $"{member.FirstName} {member.LastName}",
-                TotalVehicles = dbGarage.Vehicle.Where(v => v.MembershipId == member.MembershipId).Count(),
-                Vehicles = dbGarage.Vehicle.Where(v => v.MembershipId == member.MembershipId).ToList()
+                Address = member.Address,
+                PostNumber = member.PostNumber,
+                City = member.City,
+                StayPro = member.StayPro
             };
+
             return View(model);
         }
 
@@ -286,7 +279,7 @@ namespace Garage_3.Controllers
         {
             if (ModelState.IsValid)
             {
-                var member = dbGarage.Membership.FirstOrDefault(m => m.MembershipId == membershipView.MembershipId);
+                var member = dbGarage.Membership.FirstOrDefault(m => m.MembershipId == id);
 
                 member.Personnummer = membershipView.Personnummer;
                 member.FirstName = membershipView.FirstName;
@@ -306,12 +299,52 @@ namespace Garage_3.Controllers
                 {
                     throw;
                 }
-                return View("Members");
+                return RedirectToAction("Members");
             }
             else
                 return View(membershipView);
         }
 
+        
+        [HttpGet]
+        public async Task<IActionResult> MemberDelete(int? id)
+        {
+            if (id == null)
+            {
+                return View("Members");
+            }
+
+            var member = await dbGarage.Membership.FirstOrDefaultAsync(m => m.MembershipId == id);
+            if (member == null)
+            {
+                return View("Members");
+            }
+
+            return View(member);
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        [ActionName("MemberDelete")]
+        public async Task<IActionResult> MemberDeleteConfirmed(int id)
+        {
+            var member = await dbGarage.Membership.FindAsync(id);
+            if (member == null)
+            {
+                return View("Members");
+            }
+            else if (member.Vehicles != null)
+            {
+              if  (member.Vehicles.Where(v => v.IsParked == true).Any())
+                {
+                    TempData["message"] = $"You still have vehicles parked in the garage!";
+                    return View("Members");
+                }
+            }
+            dbGarage.Membership.Remove(member);
+            await dbGarage.SaveChangesAsync();
+            return RedirectToAction("Members");
+        }
+        
         // GET: Garages/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -566,7 +599,7 @@ namespace Garage_3.Controllers
                 dbGarage.Membership.Add(member);
                 await dbGarage.SaveChangesAsync();
                 TempData["message"] = $"Thank you, {member.FirstName} for joining our garage! Enjoy your 30 days of free Pro Membership!";
-                return RedirectToAction("Home", nameof(Index));
+                return RedirectToAction("Index", "Home");
             }
 
             return View(newMember);
