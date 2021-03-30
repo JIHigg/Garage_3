@@ -25,12 +25,11 @@
         </dd>
         @foreach (var vehicle in Model.Vehicles)
             {
-                <td>
+               
                     @Html.DisplayFor(modelItem => vehicle.Model)
-                </td>
-                <td>
+                
                     @Html.DisplayFor(modelItem =>vehicle.Make)
-                </td>
+                
             }
        
     </dl>

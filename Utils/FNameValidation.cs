@@ -10,9 +10,9 @@ namespace Garage_3.Utils
     {
         public FNameValidation(string otherProperty):base(otherProperty)
         {
-            bool success = true;
-            if (base.Equals(otherProperty))
-                success = false;
+            //bool success = true;
+            //if (base.Equals(otherProperty))
+            //    success = false;
             
         }
         public override object TypeId => base.TypeId;

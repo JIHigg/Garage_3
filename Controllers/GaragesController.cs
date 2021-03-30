@@ -59,16 +59,7 @@ namespace Garage_3.Controllers
             return View( members);
         }
 
-        public async Task<IActionResult> MemberEdit(int? id)
-        {
-            // TODO
-
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var member = await dbGarage.Membership.Where(i => i.MembershipId == id).FirstOrDefaultAsync();
+        
 
             /*             // Hack
             if (!String.IsNullOrWhiteSpace(backTo))
@@ -260,6 +251,110 @@ namespace Garage_3.Controllers
             return View(garage);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> MemberEdit(int? id)
+        {
+            if (id == null)
+            {
+                return View("Members");
+            }
+
+            var member = await dbGarage.Membership
+               .FirstOrDefaultAsync(m => m.MembershipId == id);
+            if (member == null)
+            {
+                return View("Members");
+            }
+
+            var model = new MembershipViewModel
+            {
+                MembershipId = member.MembershipId,
+                RegistrationDate = member.RegistrationDate,
+                Birthdate = member.Birthdate,
+                Personnummer = member.Personnummer,
+                FirstName = member.FirstName,
+                LastName = member.LastName,
+                Address = member.Address,
+                PostNumber = member.PostNumber,
+                City = member.City,
+                StayPro = member.StayPro
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MemberEdit(int id, [Bind("Personnummer, FirstName, LastName, Address, PostNumber, City, StayPro")] MembershipViewModel membershipView)
+        {
+            if (ModelState.IsValid)
+            {
+                var member = dbGarage.Membership.FirstOrDefault(m => m.MembershipId == id);
+
+                member.Personnummer = membershipView.Personnummer;
+                member.FirstName = membershipView.FirstName;
+                member.LastName = membershipView.LastName;
+                member.Address = membershipView.Address;
+                member.PostNumber = membershipView.PostNumber;
+                member.City = membershipView.City;
+                member.StayPro = membershipView.StayPro;
+
+
+                try
+                {
+                    dbGarage.Update(member);
+                    await dbGarage.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+                return RedirectToAction("Members");
+            }
+            else
+                return View(membershipView);
+        }
+
+        
+        [HttpGet]
+        public async Task<IActionResult> MemberDelete(int? id)
+        {
+            if (id == null)
+            {
+                return View("Members");
+            }
+
+            var member = await dbGarage.Membership.FirstOrDefaultAsync(m => m.MembershipId == id);
+            if (member == null)
+            {
+                return View("Members");
+            }
+
+            return View(member);
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        [ActionName("MemberDelete")]
+        public async Task<IActionResult> MemberDeleteConfirmed(int id)
+        {
+            var member = await dbGarage.Membership.FindAsync(id);
+            if (member == null)
+            {
+                return View("Members");
+            }
+            else if (member.Vehicles != null)
+            {
+              if  (member.Vehicles.Where(v => v.IsParked == true).Any())
+                {
+                    TempData["message"] = $"You still have vehicles parked in the garage!";
+                    return View("Members");
+                }
+            }
+            dbGarage.Membership.Remove(member);
+            await dbGarage.SaveChangesAsync();
+            return RedirectToAction("Members");
+        }
+        
         // GET: Garages/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -507,13 +602,14 @@ namespace Garage_3.Controllers
                     Address = newMember.Address,
                     PostNumber = newMember.PostNumber,
                     City = newMember.City,
-                    StayPro = newMember.StayPro
+                    StayPro = newMember.StayPro,
+                    GarageId = 1
                 };
 
                 dbGarage.Membership.Add(member);
                 await dbGarage.SaveChangesAsync();
                 TempData["message"] = $"Thank you, {member.FirstName} for joining our garage! Enjoy your 30 days of free Pro Membership!";
-                return RedirectToAction("Home", nameof(Index));
+                return RedirectToAction("Index", "Home");
             }
 
             return View(newMember);

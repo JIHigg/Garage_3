@@ -1,4 +1,4 @@
-﻿@model Garage_3.Models.Entites.Membership
+﻿@model MembershipViewModel
 
 @{
     ViewData["Title"] = "MemberEdit";
@@ -12,8 +12,7 @@
     <div class="col-md-4">
         <form asp-action="MemberEdit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="MembershipId" class="form-control" />
-
+            <input type="hidden" asp-for="MembershipId" />
             <div class="form-group">
                 <label asp-for="Personnummer" class="control-label"></label>
                 <input asp-for="Personnummer" class="form-control" />
@@ -33,11 +32,7 @@
                 <label asp-for="RegistrationDate" class="control-label"></label>
                 @Html.DisplayFor(m => m.RegistrationDate)
             </div>
-            <div class="form-group">
-                <label asp-for="Birthdate" class="control-label"></label>
-                <input asp-for="Birthdate" class="form-control" />
-                <span asp-validation-for="Birthdate" class="text-danger"></span>
-            </div>
+
             <div class="form-group">
                 <label asp-for="Address" class="control-label"></label>
                 <input asp-for="Address" class="form-control" />
@@ -54,15 +49,22 @@
                 <span asp-validation-for="City" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="TypeOfMembersShip" class="control-label"></label>
-                <input asp-for="TypeOfMembersShip" class="form-control" />
-                <span asp-validation-for="TypeOfMembersShip" class="text-danger"></span>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" asp-for="StayPro" value="true" id="IsPro" />
+                    <label class="form-check-label" asp-for="StayPro">Add Pro Membership</label>
+
+                    <span asp-validation-for="StayPro" class="text-danger"></span>
+                </div>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
     </div>
+</div>
+
+<div>
+    <a asp-action="Members">Back to List</a>
 </div>
 
 @section Scripts {
