@@ -35,6 +35,18 @@ namespace Garage_3.Controllers
             return View(garages);
         }
 
+
+        public async Task<IActionResult> Members()
+        {
+            var messageObject = TempData["message"];
+            if(messageObject != null)
+            {
+                ViewBag.Message = messageObject.ToString();
+            }
+            
+
+            return View(await dbGarage.Membership.ToListAsync());
+        }
         public async Task<IActionResult> VehicleList()
         {
             var messageObject = TempData["message"];
@@ -383,8 +395,11 @@ namespace Garage_3.Controllers
         public JsonResult CompareFirstName(string fName, string lName)
         {
             bool match = false;
-            if (fName.ToLower() == lName.ToLower())
-                match = true;
+            while (lName != null)
+            {
+                if (fName.ToLower() == lName.ToLower())
+                    match = true;
+            }
             return Json(match);
         }
         private bool GarageExists(int id)

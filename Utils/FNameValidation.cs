@@ -10,7 +10,10 @@ namespace Garage_3.Utils
     {
         public FNameValidation(string otherProperty):base(otherProperty)
         {
-
+            bool success = true;
+            if (base.Equals(otherProperty))
+                success = false;
+            
         }
         public override object TypeId => base.TypeId;
 
@@ -46,7 +49,10 @@ namespace Garage_3.Utils
 
         public override bool Match(object obj)
         {
-            return base.Match(obj);
+            bool success = true;
+            if (base.Equals(obj))
+                success = false;
+            return success;
         }
 
         public override string ToString()

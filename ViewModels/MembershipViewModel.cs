@@ -18,7 +18,7 @@ namespace Garage_3.ViewModels
         [Required(ErrorMessage = "Please enter a First Name")]
         [DisplayName("First Name")]
         [StringLength(30, ErrorMessage = "First Name cannot be longer than 30 characters")]
-        [FNameValidation("LastName", ErrorMessage ="First Name and Last Name ")]
+        [Remote(action: "CompareFirstName", controller:"Garages", AdditionalFields = nameof(LastName), ErrorMessage ="First Name and Last Name cannot match")]
         public string FirstName { get; set; }
 
         [Required(ErrorMessage = "Please enter a Last Name")]

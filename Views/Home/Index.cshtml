@@ -20,7 +20,7 @@
             <div class="card-body">
                 <h5 class="card-title">Park Your Car With Us!</h5>
                 <p class="card-text">We offer a secure, monitored location in Central Stockholm for your vehicle.</p>
-                <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Search in the Garage" asp-area="" asp-controller="Vehicles" asp-action="Garage">Search For Your Vehicle</a>
+                <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Search in the Garage" asp-area="" asp-controller="Garages" asp-action="Garage">Search For Your Vehicle</a>
             </div>
         </div>
     </div>
@@ -36,7 +36,7 @@
                 <input type="submit" value="Login" class="btn btn-primary" />
             </div>
             <div>
-                <a asp-action="Register">Register</a>
+                <a asp-controller="Garages" asp-action="RegisterMember">Register</a>
             </div>
         </form>
     </div>
