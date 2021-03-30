@@ -1,69 +1,55 @@
-﻿@model IEnumerable<Garage_3.Models.Entites.Vehicle>
+﻿@model Garage_3.Models.ViewModel.VehicleListViewModel
 
 @{
-    ViewData["Title"] = "Parked Vehicles";
+    ViewData["Title"] = "Parked vehicles";
 }
 
 <h1 class="display-3 w-100">Parked vehicles</h1>
 
-@if (Model != null && Model.Count() > 0)
+@{
+    await Html.RenderPartialAsync("_MessageView");
+}
+
+<form asp-controller="Garages" asp-action="ParkedVehiclesSearchFor" method="get">
+    <div class="form-group row">
+        <div class="col-md-6">
+            <div class="input-group">
+                <input type="text" class="form-control" id="txtSearchRegistrationNumber" name="txtSearchRegistrationNumber" placeholder="Search for Registrationnumber" value="@ViewBag.SearchFor" />&nbsp;
+                <input type="text" class="form-control" id="txtSearchVehicleType" name="txtSearchVehicleType" placeholder="Search for Vehicle type" value="@ViewBag.SearchFor" />&nbsp;
+                <button class="btn btn-secondary" id="search" type="submit" data-toggle="tooltip" data-placement="bottom" title="Search for Vehicle">Search</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+@if (Model.VehiclesInfo != null && Model.VehiclesInfo.Count() > 0)
 {
-    <table class="table table-striped">
+    <table class="table">
         <thead>
             <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.VehicleType.Type_Name)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.RegistrationNumber)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Color)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Make)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Model)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.NumberOfWheels)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.CheckInTime)
-                </th>
+                <th>@Html.DisplayNameFor(model => model.VehiclesInfo[0].Make)</th>
+                <th>@Html.DisplayNameFor(model => model.VehiclesInfo[0].Model)</th>
+                <th>@Html.DisplayNameFor(model => model.VehiclesInfo[0].RegistrationNumber)</th>
+                <th>@Html.DisplayNameFor(model => model.VehiclesInfo[0].VehicleType)</th>
+                <th>@Html.DisplayNameFor(model => model.VehiclesInfo[0].MemberName)</th>
+                <th>@Html.DisplayNameFor(model => model.VehiclesInfo[0].ParkedTime)</th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @foreach (var item in Model.VehiclesInfo)
             {
                 <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Make)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Model)</td>
+                    <td>@Html.DisplayFor(modelItem => item.RegistrationNumber)</td>
+                    <td>@Html.DisplayFor(modelItem => item.VehicleType)</td>
+                    <td>@Html.DisplayFor(modelItem => item.MemberName)</td>
+                    <td>@Html.DisplayFor(modelItem => item.ParkedTime)</td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.VehicleType.Type_Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.RegistrationNumber)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Color)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Make)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Model)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.NumberOfWheels)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.CheckInTime)
-                    </td>
-                    <td>
-                        <a class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Edit Your Vehicle" asp-action="VehicleEdit" asp-route-id="@item.VehicleId">Edit</a>
-                        <a class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="bottom" title="View Vehicle Details" asp-action="VehicleDetails" asp-route-backTo="vehicleList" asp-route-id="@item.VehicleId">Details</a>
-                        <a class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="bottom" title="Leave the Garage" asp-action="UnParkedConfirmed" asp-route-id="@item.VehicleId">Leave garage</a>
+                        <a class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Vehicle Edit" asp-action="VehicleEdit" asp-route-backTo="vehicleList" asp-route-id="@item.VehicleId">Edit</a>
+                        <a class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Vehicle Details" asp-action="VehicleDetails" asp-route-backTo="vehicleList" asp-route-id="@item.VehicleId">Details</a>
                     </td>
                 </tr>
             }
