@@ -4,14 +4,16 @@ using Garage_3.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Garage_3.Migrations
 {
     [DbContext(typeof(Garage_3Context))]
-    partial class Garage_3ContextModelSnapshot : ModelSnapshot
+    [Migration("20210329165011_added ParkingPlaceId to Vehicle model")]
+    partial class addedParkingPlaceIdtoVehiclemodel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -350,28 +352,6 @@ namespace Garage_3.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Garage_3.Models.Entites.ParkingPlaceVehicle", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("ParkingPlaceId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("VehicleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ParkingPlaceId");
-
-                    b.HasIndex("VehicleId");
-
-                    b.ToTable("ParkingPlaceVehicles");
-                });
-
             modelBuilder.Entity("Garage_3.Models.Entites.Vehicle", b =>
                 {
                     b.Property<int>("VehicleId")
@@ -592,6 +572,21 @@ namespace Garage_3.Migrations
                     b.ToTable("ReceiptViewModel");
                 });
 
+            modelBuilder.Entity("ParkingPlaceVehicle", b =>
+                {
+                    b.Property<int>("ParkingPlacesParkingPlaceId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ParkingPlacesParkingPlaceId", "VehicleId");
+
+                    b.HasIndex("VehicleId");
+
+                    b.ToTable("ParkingPlaceVehicle");
+                });
+
             modelBuilder.Entity("Garage_3.Models.Entites.Membership", b =>
                 {
                     b.HasOne("Garage_3.Models.Entites.Garage", "Garage")
@@ -614,25 +609,6 @@ namespace Garage_3.Migrations
                     b.Navigation("Garage");
                 });
 
-            modelBuilder.Entity("Garage_3.Models.Entites.ParkingPlaceVehicle", b =>
-                {
-                    b.HasOne("Garage_3.Models.Entites.ParkingPlace", "ParkingPlace")
-                        .WithMany("ParkingPlaceVehicles")
-                        .HasForeignKey("ParkingPlaceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Garage_3.Models.Entites.Vehicle", "Vehicle")
-                        .WithMany("ParkingPlaceVehicles")
-                        .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ParkingPlace");
-
-                    b.Navigation("Vehicle");
-                });
-
             modelBuilder.Entity("Garage_3.Models.Entites.Vehicle", b =>
                 {
                     b.HasOne("Garage_3.Models.Entites.Membership", "Membership")
@@ -652,6 +628,21 @@ namespace Garage_3.Migrations
                     b.Navigation("VehicleType");
                 });
 
+            modelBuilder.Entity("ParkingPlaceVehicle", b =>
+                {
+                    b.HasOne("Garage_3.Models.Entites.ParkingPlace", null)
+                        .WithMany()
+                        .HasForeignKey("ParkingPlacesParkingPlaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Garage_3.Models.Entites.Vehicle", null)
+                        .WithMany()
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Garage_3.Models.Entites.Garage", b =>
                 {
                     b.Navigation("Memberships");
@@ -662,16 +653,6 @@ namespace Garage_3.Migrations
             modelBuilder.Entity("Garage_3.Models.Entites.Membership", b =>
                 {
                     b.Navigation("Vehicles");
-                });
-
-            modelBuilder.Entity("Garage_3.Models.Entites.ParkingPlace", b =>
-                {
-                    b.Navigation("ParkingPlaceVehicles");
-                });
-
-            modelBuilder.Entity("Garage_3.Models.Entites.Vehicle", b =>
-                {
-                    b.Navigation("ParkingPlaceVehicles");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,0 +1,55 @@
+﻿@model Garage_3.Models.ViewModel.ParkVehicleSelectVehicleViewModel
+
+@{
+    ViewData["Title"] = "Park Vehicle";
+}
+
+<h1>Park vehicle</h1>
+
+<div>
+    <div class="row">
+        <div class="col-md-6">
+            <h4>@Model.MemberName select vehicle that you want to park</h4>
+        </div>
+    </div>
+</div>
+
+<div>
+    @if (Model.Vehicles != null && Model.Vehicles.Count > 0)
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Vehicles[0].Make)</th>
+                    <th>@Html.DisplayNameFor(model => model.Vehicles[0].Model)</th>
+                    <th>@Html.DisplayNameFor(model => model.Vehicles[0].RegistrationNumber)</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Vehicles)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.Make)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Model)</td>
+                        <td>@Html.DisplayFor(modelItem => item.RegistrationNumber)</td>
+                        <td>
+                            <a class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Edit Your Vehicle" asp-action="Edit" asp-route-VehicleId="@item.VehicleId">Edit</a>
+                            <a class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="bottom" title="View Vehicle Details" asp-action="Details" asp-route-VehicleId="@item.VehicleId">Details</a>
+                            <a class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Park vehicle" asp-action="ParkVehicleSelectParkingPlace" asp-route-VehicleId="@item.VehicleId">Park vehicle</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div>
+            No vehicles
+        </div>
+    }
+
+    <hr/>
+    <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Park a New Vehicle" asp-action="ParkNewVehicle" asp-route-MembershipId="@Model.MemberShip.MembershipId">Park a new vehicle</a>
+</div>

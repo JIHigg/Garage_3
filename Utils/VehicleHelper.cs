@@ -1,8 +1,10 @@
 ﻿using Garage_3.ViewModels;
+using Garage_3.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Garage_3.Models.Entites;
 
 namespace Garage_3.Utils
 {
@@ -12,6 +14,83 @@ namespace Garage_3.Utils
     public class VehicleHelper
     {
         
+
+        /// <summary>
+        /// Method sort list of vehicles by registrationsnumber
+        /// Sorting order decides by sortOrder
+        /// </summary>
+        /// <param name="lsVehicles">List of vehicles that we want to sort/order</param>
+        /// <param name="sortOrder">Sort order. Shall be asc or desc. defaul sorting will ve asc</param>
+        /// <returns>List of vehicles sorted by registrationnumber</returns>
+        public static List<VehicleViewModel> SortByRegistrationNumber(List<VehicleViewModel> lsVehicles, string sortOrder)
+        {
+            List<VehicleViewModel> lsSortedVehicles = lsVehicles;
+
+            if (lsVehicles != null && lsVehicles.Count > 1)
+            {
+                if (String.IsNullOrWhiteSpace(sortOrder))
+                    sortOrder = "asc";
+
+                if(sortOrder.Equals("desc"))                   
+                    lsSortedVehicles = lsVehicles.OrderByDescending(r => r.RegistrationNumber).ToList();
+                else
+                    lsSortedVehicles = lsVehicles.OrderBy(r => r.RegistrationNumber).ToList();
+            }
+
+            return lsSortedVehicles;
+        }
+
+
+        /// <summary>
+        /// Method sort list of vehicles by time of arrival
+        /// Sorting order decides by sortOrder
+        /// </summary>
+        /// <param name="lsVehicles">List of vehicles that we want to sort/order</param>
+        /// <param name="sortOrder">Sort order. Shall be asc or desc. defaul sorting will ve asc</param>
+        /// <returns>list of vehicles sorted by time of arrival</returns>
+        public static List<VehicleViewModel> SortByTimeOfArrival(List<VehicleViewModel> lsVehicles, string sortOrder)
+        {
+            List<VehicleViewModel> lsSortedVehicles = lsVehicles;
+
+            if (lsVehicles != null && lsVehicles.Count > 1)
+            {
+                if (String.IsNullOrWhiteSpace(sortOrder))
+                    sortOrder = "asc";
+        
+                if (sortOrder.Equals("desc"))
+                    lsSortedVehicles = lsVehicles.OrderByDescending(r => r.TimeOfArrival).ToList();
+                else
+                    lsSortedVehicles = lsVehicles.OrderBy(r => r.TimeOfArrival).ToList();
+            }
+
+            return lsSortedVehicles;
+        }
+
+
+        /// <summary>
+        /// Method sort list of vehicles
+        /// What attribut we shall sort in decides by sortBy
+        /// Sorting order decides by sortOrder
+        /// </summary>
+        /// <param name="lsVehicles">List of vehicles that we want to sort/order</param>
+        /// <param name="sortBy">What attribut shall we sort on. Shall be RegistrationNumber or TimeOfArrival</param>
+        /// <param name="sortOrder">Sort order. Shall be asc or desc. defaul sorting will ve asc</param>               
+        /// <returns>List of sorted vehicles</returns>
+        public static List<VehicleViewModel> Sort(List<VehicleViewModel> lsVehicles, string sortBy, string sortOrder)
+        {
+            List<VehicleViewModel> lsSortedVehicles = lsVehicles;
+
+            if(!String.IsNullOrWhiteSpace(sortBy))
+            {
+                if (sortBy.Equals("RegistrationNumber"))
+                    lsSortedVehicles = SortByRegistrationNumber(lsVehicles, sortOrder);
+                else if (sortBy.Equals("TimeOfArrival"))
+                    lsSortedVehicles = SortByTimeOfArrival(lsVehicles, sortOrder);
+            }
+
+            return lsSortedVehicles;
+        }
+
 
         /// <summary>
         /// Method create a text with information about how long ago dtParkedTime
@@ -83,5 +162,65 @@ namespace Garage_3.Utils
 
             return strBuild.ToString();
         }
+
+        /// <summary>
+        /// Determines if Member is ProMembership
+        /// </summary>
+        /// <param name="member"></param>
+        /// <returns></returns>
+        internal static bool IsPro(Membership member)
+        {
+            DateTime now = DateTime.Now;
+            int Age = now.Year - member.Birthdate.Year;
+            bool freeTrial =  (now.DayOfYear - member.RegistrationDate.DayOfYear < 30) ;
+            bool oldAge = 64 < Age && Age > 67 ;
+            bool Pro = false;
+            
+
+            if (member.StayPro || oldAge|| freeTrial)
+                Pro = true;
+            return Pro;
+        }
+
+        internal static double CalculatePrice(DateTime dtParkedTime)
+        {
+            DateTime dtNow = DateTime.Now;
+            TimeSpan dtResult = dtNow - dtParkedTime;
+            var minutes = dtResult.TotalMinutes;
+
+            int pricePerMinute = 3;
+            //var price = Convert.ToString(minutes * pricePerMinute);
+            return (double)(minutes * pricePerMinute);
+        }
+
+        public static int CalculateAge(string personnummer) 
+        {
+            //Creating birthday from Personnummer
+            string bdYear = personnummer.ToCharArray(0, 4).ToString();
+            string bdMonth = personnummer.ToCharArray(4, 2).ToString();
+            string bdDay = personnummer.ToCharArray(6, 2).ToString();
+            string bdayString = $"{bdYear}/{bdMonth}/{bdDay}";
+            DateTime Birthday = DateTime.Parse(bdayString);
+
+            //Calculate Age
+            var today = DateTime.Today;
+            var age = today.Year - Birthday.Year;
+            if (Birthday.DayOfYear < today.DayOfYear)
+                age--;
+            return age;
+        }
+
+        public static DateTime ConvertBirthdayFromPersonnummer(string personnummer)
+        {
+            //Creating birthday from Personnummer
+            string bdYear = personnummer.Substring(0,4);
+            string bdMonth = personnummer.Substring(4,2);
+            string bdDay = personnummer.Substring(6,2);
+            string bdayString = $"{bdYear}/{bdMonth}/{bdDay}";
+            DateTime Birthday = DateTime.Parse(bdayString);
+            return Birthday;
+        }
+
+
     }
 }

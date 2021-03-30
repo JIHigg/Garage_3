@@ -1,0 +1,129 @@
+﻿@model Garage_3.Models.ViewModel.ParkVehicleCreateViewModel
+
+@{
+    ViewData["Title"] = "Park a new Vehicle";
+}
+
+<h1>Park a new Vehicle</h1>
+
+@{
+    await Html.RenderPartialAsync("_MessageView");
+}
+
+@if (Model.IsGarageFull == false)
+{
+<div>
+    <div class="row">
+        <div class="col-md-6">
+            <h4>@Model.MemberName create new Vehicle and park it</h4>
+        </div>
+    </div>
+</div>
+
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form metod="post" asp-controller="Garages">
+            <input type="hidden" value="@Model.MembershipId" id="MembershipId" name="MembershipId" />
+            <input type="hidden" value="@Model.MemberName" id="MemberName" name="MemberName" />
+
+            <!-- Modal dialog -->
+            <div class="modal fade" id="CreateNewVehicleTypeModal" tabindex="-1" aria-labelledby="CreateNewVehicleTypeModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="CreateNewVehicleTypeModalLabel">Create new vehicle type</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">X</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label asp-for="NewVehicleType" class="control-label"></label>
+                                <input asp-for="NewVehicleType" class="form-control" />
+                                <span asp-validation-for="NewVehicleType" class="text-danger"></span>
+                            </div>
+                            <!--<div class="form-group">
+                                <label asp-for="NewVehicleTypeSize" class="control-label"></label>
+                                <input asp-for="NewVehicleTypeSize" class="form-control" />
+                                <span asp-validation-for="NewVehicleTypeSize" class="text-danger"></span>                    
+                            </div>-->
+                        </div>
+                        <div class="modal-footer">
+                            <input type="button" value="Close" class="btn btn-secondary" data-dismiss="modal" data-toggle="tooltip" data-placement="bottom" title="Close dialog" />
+
+                            <input type="submit" formnovalidate value="Save new vehicle type" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Save new vehicle type" formaction="AddNewVehicleType" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End modal dialog -->
+
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="VehicleTypesId" class="control-label">Vehicle types</label>
+                @Html.DropDownList("VehicleTypesId", Model.VehicleTypes, new { @class = "form-control" })
+                <span asp-validation-for="VehicleTypesId" class="text-danger"></span>
+                <br />
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#CreateNewVehicleTypeModal">
+                    Add new vehicle type
+                </button>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ParkingPlaceId" class="control-label">Free parking places</label>
+                @Html.DropDownList("ParkingPlaceId", Model.FreeParkingPlaces, new { @class = "form-control" })
+                <span asp-validation-for="ParkingPlaceId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="RegistrationNumber" class="control-label"></label>
+                <input asp-for="RegistrationNumber" class="form-control" />
+                <span asp-validation-for="RegistrationNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NumberOfWheels" class="control-label"></label>
+                <input asp-for="NumberOfWheels" class="form-control" />
+                <span asp-validation-for="NumberOfWheels" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Year" class="control-label"></label>
+                <input asp-for="Year" class="form-control" />
+                <span asp-validation-for="Year" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Model" class="control-label"></label>
+                <input asp-for="Model" class="form-control" />
+                <span asp-validation-for="Model" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Make" class="control-label"></label>
+                <input asp-for="Make" class="form-control" />
+                <span asp-validation-for="Make" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Color" class="control-label"></label>
+                <input asp-for="Color" class="form-control" />
+                <span asp-validation-for="Color" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Park vehicle" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Park Your Vehicle" formaction="ParkCreatedVehicle" />
+            </div>
+        </form>
+    </div>
+</div>
+}
+else
+{
+    await Html.RenderPartialAsync("_ParkMessageView");
+}
+
+<div>
+    <a asp-action="Index" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Garage">Back to Garage</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

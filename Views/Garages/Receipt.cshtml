@@ -1,0 +1,80 @@
+﻿@model Garage_3.ViewModels.ReceiptViewModel
+
+@{
+    ViewData["Title"] = "Receipt";
+}
+
+<h1 class="w-25 font-weight-bold">Receipt</h1>
+
+@{
+    await Html.RenderPartialAsync("_MessageView");
+}
+
+<div>
+    <h4>Vehicle</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.MemberNumber)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.MemberNumber)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Type)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Type)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RegistrationNumber)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RegistrationNumber)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CheckInAsString)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CheckInAsString)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CheckOutAsString)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CheckOutAsString)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ParkedTime)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ParkedTime)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ProSavings)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ProSavings)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TotalPrice)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TotalPrice)
+        </dd>
+    </dl>
+</div>
+<div id="btnprint">
+    <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Back to Garage" asp-action="Index">Back to Garage</a>
+    <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Print" onclick="window_print()" asp-action="Index">Print</a>
+</div>
+
+@*<div class="btn-group" id="btnprint">
+    <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Back to Garage" asp-action="Index">Back to Garage</a>
+    <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Print" onclick="window_print()" asp-action="Index">Print</a>
+</div>*@
+
+@*<div>
+    <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Back to Garage" asp-action="Index">Back to Garage</a>
+    <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Print" onclick="window.print()" asp-action="Index">Print</a>
+</div>*@

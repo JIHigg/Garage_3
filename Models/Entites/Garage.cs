@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Garage_3.Models.Entites
 {
@@ -10,7 +8,11 @@ namespace Garage_3.Models.Entites
     {
         [Key]
         public int GarageId { get; set; }
+
+        [DisplayName("Name of garage")]
         public string GarageName { get; set; }
+
+        [DisplayName("Number of parking places in the garage")]
         public int NumberOfParkingPlaces { get; set; }
 
 

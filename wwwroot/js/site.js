@@ -1,12 +1,18 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
-
-$(function () {
+﻿$(function () {
     $('[data-toggle="tooltip"]').tooltip()
 })
 
-function sendMessage() {
-    alert("Hello! Your message has been sent successfully!");
+function window_print() {
+    var ButtonControl = document.getElementById("btnprint");
+    ButtonControl.style.visibility = "hidden";
+    window.print();
 }
+
+
+
+var myModal = document.getElementById('CreateNewVehicleTypeModal')
+var myInput = document.getElementById('NewVehicleType')
+
+myModal.addEventListener('shown.bs.modal', function () {
+    myInput.focus()
+})

@@ -61,6 +61,7 @@ namespace Garage_3.Models.Entites
 
         public Membership Membership { get; set; }
         public VehicleType VehicleType { get; set; }
+        public int? ParkingPlaceId { get; set; }
 
         // Many-to-many
         public virtual ICollection<ParkingPlace> ParkingPlaces { get; set; }
