@@ -191,7 +191,7 @@ namespace Garage_3.Controllers
             return View("Members", lstMembers);
         }
 
-        public async Task<IActionResult> VehicleList()
+        public async Task<IActionResult> VehicleListOld()
         {
             var vehicles = await dbGarage.Vehicle.Include("VehicleType").Where(v => v.IsParked == true).ToListAsync();
 
@@ -682,6 +682,55 @@ namespace Garage_3.Controllers
             return View(vehicle);
         }
 
+        [HttpPost]
+        public async Task<IActionResult>VehicleEdit(int id, string backTo)
+        {
+            // TODO
+            // asp-action="VehicleEdit" asp-route-backTo="vehicleList"
+
+            return View();
+        }
+
+        public async Task<IActionResult> ParkedVehiclesSearchFor(string txtSearchRegistrationNumber, string txtSearchVehicleType)
+        {
+            // TODO Hard code to GarageId = 1
+            int iGarageId = 1;
+
+            // Get list of parked vehicles that we shall search in
+            var results = await GetParkedVehiclelist(iGarageId);
+
+            if (results != null && results.Count() > 0)
+            {
+                if (!String.IsNullOrWhiteSpace(txtSearchRegistrationNumber))
+                {
+                    txtSearchRegistrationNumber = txtSearchRegistrationNumber.Trim();
+                    //txtSearchRegistrationNumber = txtSearchRegistrationNumber.ToLower();
+
+                    results = results.Where(r => r.RegistrationNumber.Contains(txtSearchRegistrationNumber, StringComparison.OrdinalIgnoreCase)).ToList();
+                }
+
+                if (!String.IsNullOrWhiteSpace(txtSearchVehicleType))
+                {
+                    txtSearchVehicleType = txtSearchVehicleType.Trim();
+
+                    results = results.Where(r => r.VehicleType.Contains(txtSearchVehicleType, StringComparison.OrdinalIgnoreCase)).ToList();
+                }
+            }
+
+            var model = new VehicleListViewModel();
+            model.VehiclesInfo = results;
+
+            return View("VehicleList", model);
+        }
+
+
+        public async Task<IActionResult> VehicleEdit(int id)
+        {
+            var vehicle = await dbGarage.Vehicle.Include("VehicleType").Where(i => i.VehicleId == id).FirstOrDefaultAsync();
+
+            return View(vehicle);
+        }
+
         public IActionResult VehicleDetails(int id, string backTo)
         {            
             var vehicle = dbGarage.Vehicle.Where(v => v.VehicleId == id).Select(a => new VehicleDetailsViewModel { 
@@ -715,6 +764,88 @@ namespace Garage_3.Controllers
 
             return View(vehicle);
         }
+
+        #region New List parked vehicles
+
+        /// <summary>
+        /// Method get a list of vehicle and information for the parked vehicle list
+        /// </summary>
+        /// <param name="iGarageId">Garage id</param>
+        /// <returns>List of GarageVehiclesInfoViewModel objects</returns>
+        private async Task<List<GarageVehiclesInfoViewModel>> GetParkedVehiclelist(int iGarageId)
+        {
+            var garage = await dbGarage.Garage.AsNoTracking().Where(i => i.GarageId == iGarageId).FirstOrDefaultAsync();
+            var members = await dbGarage.Membership.AsNoTracking().Where(i => i.GarageId == iGarageId).ToListAsync();
+            int iNumberOfOccupiedParkingPlaces = await dbGarage.ParkingPlace.Where(g => g.GarageId == garage.GarageId && g.IsOccupied).CountAsync();
+            var vehicleTypes = await dbGarage.VehicleType.AsNoTracking().ToListAsync();
+
+            // TODO Check if algo is ok in another test project
+            // Now i want to know a members type of membership
+            foreach (var member in members)
+                member.TypeOfMembersShip = MemberShipHelper.GetTypeOfMemberShip(member);
+
+            var results = await dbGarage.ParkingPlace
+                .Join(
+                dbGarage.Vehicle,
+                parkingPlace => parkingPlace.ParkingPlaceId,
+                vehicle => vehicle.ParkingPlaceId,
+                (parkingPlace, vehicle) => new GarageVehiclesInfoViewModel
+                {
+                    VehicleId = vehicle.VehicleId,
+                    RegistrationNumber = vehicle.RegistrationNumber,
+                    CheckInTime = vehicle.CheckInTime,
+                    CheckOutTime = DateTime.Now,
+                    IsParked = vehicle.IsParked,
+                    VehicleTypeId = vehicle.VehicleTypeId,
+                    VehicleType = String.Empty,
+                    MemberShipId = vehicle.MembershipId,
+                    Make = vehicle.Make,
+                    Model = vehicle.Model,
+                    Year = vehicle.Year,
+                    ParkingPlaceId = parkingPlace.ParkingPlaceId,
+                    GarageId = parkingPlace.GarageId
+                })
+                .Where(n => n.GarageId == iGarageId && n.IsParked == true)
+                .ToListAsync();
+
+            // Get data i dident get in the join
+            Membership memberShip = null;
+            VehicleType vehicleType = null;
+
+            foreach (var result in results)
+            {
+                // Get members first and last name
+                memberShip = members.Where(m => m.MembershipId == result.MemberShipId).FirstOrDefault();
+                if (memberShip != null)
+                {
+                    result.MemberFirstName = memberShip.FirstName;
+                    result.MemberLastName = memberShip.LastName;
+                }
+
+                // Get the vehicle type
+                vehicleType = vehicleTypes.Where(v => v.VehicleTypeId == result.VehicleTypeId).FirstOrDefault();
+                if (vehicleType != null)
+                    result.VehicleType = vehicleType.Type_Name;
+
+                result.ParkedTime = VehicleHelper.CalculateParkedTime(result.CheckInTime);
+            }
+
+            return results;
+        }
+
+
+        public async Task<IActionResult> VehicleList()
+        {
+            // TODO Hard code to GarageId = 1
+            int iGarageId = 1;
+
+            var model = new VehicleListViewModel();
+            model.VehiclesInfo = await GetParkedVehiclelist(iGarageId);
+
+            return View(model);
+        }
+
+        #endregion // End of region New List parked vehicles
 
         #region Create a new vehicle and park it
         public async Task<IActionResult> AddNewVehicleType([Bind("NewVehicleType", "NewVehicleTypeSize", "RegistrationNumber", "NumberOfWheels", "Year", "Model", "Make", "Color", "VehicleTypesId", "MembershipId", "MemberName")] ParkVehicleCreateViewModel parkVehicleCreateViewModel)
