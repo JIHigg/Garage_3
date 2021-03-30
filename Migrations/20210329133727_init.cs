@@ -98,6 +98,9 @@ namespace Garage_3.Migrations
                     Model = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
                     Make = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
                     Color = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
+                    CheckInTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CheckOutTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsParked = table.Column<bool>(type: "bit", nullable: false),
                     MembershipId = table.Column<int>(type: "int", nullable: false),
                     VehicleTypeId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -119,23 +122,25 @@ namespace Garage_3.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ParkingPlaceVehicle",
+                name: "ParkingPlaceVehicles",
                 columns: table => new
                 {
-                    ParkingPlacesParkingPlaceId = table.Column<int>(type: "int", nullable: false),
-                    VehicleId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    VehicleId = table.Column<int>(type: "int", nullable: false),
+                    ParkingPlaceId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ParkingPlaceVehicle", x => new { x.ParkingPlacesParkingPlaceId, x.VehicleId });
+                    table.PrimaryKey("PK_ParkingPlaceVehicles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ParkingPlaceVehicle_ParkingPlace_ParkingPlacesParkingPlaceId",
-                        column: x => x.ParkingPlacesParkingPlaceId,
+                        name: "FK_ParkingPlaceVehicles_ParkingPlace_ParkingPlaceId",
+                        column: x => x.ParkingPlaceId,
                         principalTable: "ParkingPlace",
                         principalColumn: "ParkingPlaceId",
                         onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
-                        name: "FK_ParkingPlaceVehicle_Vehicle_VehicleId",
+                        name: "FK_ParkingPlaceVehicles_Vehicle_VehicleId",
                         column: x => x.VehicleId,
                         principalTable: "Vehicle",
                         principalColumn: "VehicleId",
@@ -162,10 +167,10 @@ namespace Garage_3.Migrations
                 columns: new[] { "MembershipId", "Address", "Base_Rate", "Birthdate", "City", "FirstName", "GarageId", "Hourly_Rate", "LastName", "Personnummer", "PostNumber", "RegistrationDate" },
                 values: new object[,]
                 {
-                    { 1, "123 Johan St", 1.2m, new DateTime(1991, 3, 25, 15, 56, 52, 408, DateTimeKind.Local).AddTicks(1925), "Stockholm", "Kalle", 1, 2.3m, "Anka", "198706051234", "11111", new DateTime(2021, 3, 25, 15, 56, 52, 405, DateTimeKind.Local).AddTicks(9318) },
-                    { 2, "123 Johan St", 1.2m, new DateTime(1971, 3, 25, 15, 56, 52, 408, DateTimeKind.Local).AddTicks(4410), "Bag End", "Frodo", 1, 2.3m, "Baggins", "198706051234", "22222", new DateTime(2021, 3, 25, 15, 56, 52, 408, DateTimeKind.Local).AddTicks(4394) },
-                    { 3, "123 Johan St", 1.2m, new DateTime(1956, 3, 25, 15, 56, 52, 408, DateTimeKind.Local).AddTicks(4422), "Hobbiton", "Samwise", 1, 2.3m, "Gamgee", "198706051234", "33333", new DateTime(2021, 3, 25, 15, 56, 52, 408, DateTimeKind.Local).AddTicks(4419) },
-                    { 4, "123 Johan St", 1.2m, new DateTime(1951, 3, 25, 15, 56, 52, 408, DateTimeKind.Local).AddTicks(4429), "Stockholm", "Meriadoc", 1, 2.3m, "Brandybuck", "198706051234", "44444", new DateTime(2017, 3, 25, 15, 56, 52, 408, DateTimeKind.Local).AddTicks(4426) }
+                    { 1, "123 Johan St", 1.2m, new DateTime(1991, 3, 29, 15, 37, 26, 832, DateTimeKind.Local).AddTicks(1204), "Stockholm", "Kalle", 1, 2.3m, "Anka", "198706051234", "11111", new DateTime(2021, 3, 29, 15, 37, 26, 830, DateTimeKind.Local).AddTicks(6154) },
+                    { 2, "123 Johan St", 1.2m, new DateTime(1971, 3, 29, 15, 37, 26, 832, DateTimeKind.Local).AddTicks(3113), "Bag End", "Frodo", 1, 2.3m, "Baggins", "198706051234", "22222", new DateTime(2021, 3, 29, 15, 37, 26, 832, DateTimeKind.Local).AddTicks(3104) },
+                    { 3, "123 Johan St", 1.2m, new DateTime(1956, 3, 29, 15, 37, 26, 832, DateTimeKind.Local).AddTicks(3122), "Hobbiton", "Samwise", 1, 2.3m, "Gamgee", "198706051234", "33333", new DateTime(2021, 3, 29, 15, 37, 26, 832, DateTimeKind.Local).AddTicks(3120) },
+                    { 4, "123 Johan St", 1.2m, new DateTime(1951, 3, 29, 15, 37, 26, 832, DateTimeKind.Local).AddTicks(3128), "Stockholm", "Meriadoc", 1, 2.3m, "Brandybuck", "198706051234", "44444", new DateTime(2017, 3, 29, 15, 37, 26, 832, DateTimeKind.Local).AddTicks(3125) }
                 });
 
             migrationBuilder.InsertData(
@@ -197,13 +202,13 @@ namespace Garage_3.Migrations
 
             migrationBuilder.InsertData(
                 table: "Vehicle",
-                columns: new[] { "VehicleId", "Color", "Make", "MembershipId", "Model", "NumberOfWheels", "RegistrationNumber", "VehicleTypeId", "Year" },
+                columns: new[] { "VehicleId", "CheckInTime", "CheckOutTime", "Color", "IsParked", "Make", "MembershipId", "Model", "NumberOfWheels", "RegistrationNumber", "VehicleTypeId", "Year" },
                 values: new object[,]
                 {
-                    { 1, "Red", "Banana", 1, "Volvo", 4, "asedf", 1, "1993" },
-                    { 2, "Yellow", "Banana", 2, "Volvo", 4, "fdsa", 1, "1996" },
-                    { 3, "Blue", "F150", 3, "Ford", 4, "zxcve", 2, "2001" },
-                    { 4, "Green", "Fancy Car", 4, "Porsche", 4, "qewrty", 1, "2020" }
+                    { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Red", false, "Banana", 1, "Volvo", 4, "asedf", 1, "1993" },
+                    { 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Yellow", false, "Banana", 2, "Volvo", 4, "fdsa", 1, "1996" },
+                    { 3, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Blue", false, "F150", 3, "Ford", 4, "zxcve", 2, "2001" },
+                    { 4, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Green", false, "Fancy Car", 4, "Porsche", 4, "qewrty", 1, "2020" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -217,8 +222,13 @@ namespace Garage_3.Migrations
                 column: "GarageId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ParkingPlaceVehicle_VehicleId",
-                table: "ParkingPlaceVehicle",
+                name: "IX_ParkingPlaceVehicles_ParkingPlaceId",
+                table: "ParkingPlaceVehicles",
+                column: "ParkingPlaceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ParkingPlaceVehicles_VehicleId",
+                table: "ParkingPlaceVehicles",
                 column: "VehicleId");
 
             migrationBuilder.CreateIndex(
@@ -235,7 +245,7 @@ namespace Garage_3.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ParkingPlaceVehicle");
+                name: "ParkingPlaceVehicles");
 
             migrationBuilder.DropTable(
                 name: "ParkingPlace");

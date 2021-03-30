@@ -16,6 +16,18 @@ namespace Garage_3.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            // Define rules for connecting table (many-to-many)
+
+            modelBuilder.Entity<Vehicle>()
+                .HasMany(v => v.ParkingPlaces)
+                .WithMany(p => p.Vehicle)
+                .UsingEntity<ParkingPlaceVehicle>(
+                    pp => pp.HasOne(pp => pp.ParkingPlace).WithMany(p => p.ParkingPlaceVehicles),
+                    pp => pp.HasOne(pp => pp.Vehicle).WithMany(v => v.ParkingPlaceVehicles));
+
+
+
+
             modelBuilder.Entity<Garage>().HasData(
                 new Garage
                 {
@@ -327,8 +339,10 @@ namespace Garage_3.Data
         public DbSet<ParkingPlace> ParkingPlace { get; set; }
         public DbSet<Vehicle> Vehicle { get; set; }
         public DbSet<VehicleType> VehicleType { get; set; }
-        public DbSet<Garage_3.ViewModels.DetailsViewModel> DetailsViewModel { get; set; }
-        public DbSet<Garage_3.ViewModels.ReceiptViewModel> ReceiptViewModel { get; set; }
+
+        public DbSet<ParkingPlaceVehicle> ParkingPlaceVehicles { get; set; }
+        //public DbSet<Garage_3.ViewModels.DetailsViewModel> DetailsViewModel { get; set; }
+        //public DbSet<Garage_3.ViewModels.ReceiptViewModel> ReceiptViewModel { get; set; }
 
     }
 }

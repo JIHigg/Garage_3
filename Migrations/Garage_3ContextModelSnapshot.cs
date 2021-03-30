@@ -109,7 +109,7 @@ namespace Garage_3.Migrations
                             MembershipId = 1,
                             Address = "123 Johan St",
                             Base_Rate = 1.2m,
-                            Birthdate = new DateTime(1991, 3, 26, 13, 21, 25, 536, DateTimeKind.Local).AddTicks(3498),
+                            Birthdate = new DateTime(1991, 3, 29, 15, 37, 26, 832, DateTimeKind.Local).AddTicks(1204),
                             City = "Stockholm",
                             FirstName = "Kalle",
                             GarageId = 1,
@@ -117,14 +117,14 @@ namespace Garage_3.Migrations
                             LastName = "Anka",
                             Personnummer = "198706051234",
                             PostNumber = "11111",
-                            RegistrationDate = new DateTime(2021, 3, 26, 13, 21, 25, 528, DateTimeKind.Local).AddTicks(9030)
+                            RegistrationDate = new DateTime(2021, 3, 29, 15, 37, 26, 830, DateTimeKind.Local).AddTicks(6154)
                         },
                         new
                         {
                             MembershipId = 2,
                             Address = "123 Johan St",
                             Base_Rate = 1.2m,
-                            Birthdate = new DateTime(1971, 3, 26, 13, 21, 25, 537, DateTimeKind.Local).AddTicks(2968),
+                            Birthdate = new DateTime(1971, 3, 29, 15, 37, 26, 832, DateTimeKind.Local).AddTicks(3113),
                             City = "Bag End",
                             FirstName = "Frodo",
                             GarageId = 1,
@@ -132,14 +132,14 @@ namespace Garage_3.Migrations
                             LastName = "Baggins",
                             Personnummer = "198706051234",
                             PostNumber = "22222",
-                            RegistrationDate = new DateTime(2021, 3, 26, 13, 21, 25, 537, DateTimeKind.Local).AddTicks(2915)
+                            RegistrationDate = new DateTime(2021, 3, 29, 15, 37, 26, 832, DateTimeKind.Local).AddTicks(3104)
                         },
                         new
                         {
                             MembershipId = 3,
                             Address = "123 Johan St",
                             Base_Rate = 1.2m,
-                            Birthdate = new DateTime(1956, 3, 26, 13, 21, 25, 537, DateTimeKind.Local).AddTicks(3022),
+                            Birthdate = new DateTime(1956, 3, 29, 15, 37, 26, 832, DateTimeKind.Local).AddTicks(3122),
                             City = "Hobbiton",
                             FirstName = "Samwise",
                             GarageId = 1,
@@ -147,14 +147,14 @@ namespace Garage_3.Migrations
                             LastName = "Gamgee",
                             Personnummer = "198706051234",
                             PostNumber = "33333",
-                            RegistrationDate = new DateTime(2021, 3, 26, 13, 21, 25, 537, DateTimeKind.Local).AddTicks(3007)
+                            RegistrationDate = new DateTime(2021, 3, 29, 15, 37, 26, 832, DateTimeKind.Local).AddTicks(3120)
                         },
                         new
                         {
                             MembershipId = 4,
                             Address = "123 Johan St",
                             Base_Rate = 1.2m,
-                            Birthdate = new DateTime(1951, 3, 26, 13, 21, 25, 537, DateTimeKind.Local).AddTicks(3056),
+                            Birthdate = new DateTime(1951, 3, 29, 15, 37, 26, 832, DateTimeKind.Local).AddTicks(3128),
                             City = "Stockholm",
                             FirstName = "Meriadoc",
                             GarageId = 1,
@@ -162,7 +162,7 @@ namespace Garage_3.Migrations
                             LastName = "Brandybuck",
                             Personnummer = "198706051234",
                             PostNumber = "44444",
-                            RegistrationDate = new DateTime(2017, 3, 26, 13, 21, 25, 537, DateTimeKind.Local).AddTicks(3042)
+                            RegistrationDate = new DateTime(2017, 3, 29, 15, 37, 26, 832, DateTimeKind.Local).AddTicks(3125)
                         });
                 });
 
@@ -354,6 +354,28 @@ namespace Garage_3.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Garage_3.Models.Entites.ParkingPlaceVehicle", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ParkingPlaceId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParkingPlaceId");
+
+                    b.HasIndex("VehicleId");
+
+                    b.ToTable("ParkingPlaceVehicles");
+                });
+
             modelBuilder.Entity("Garage_3.Models.Entites.Vehicle", b =>
                 {
                     b.Property<int>("VehicleId")
@@ -508,21 +530,6 @@ namespace Garage_3.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ParkingPlaceVehicle", b =>
-                {
-                    b.Property<int>("ParkingPlacesParkingPlaceId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("VehicleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ParkingPlacesParkingPlaceId", "VehicleId");
-
-                    b.HasIndex("VehicleId");
-
-                    b.ToTable("ParkingPlaceVehicle");
-                });
-
             modelBuilder.Entity("Garage_3.Models.Entites.Membership", b =>
                 {
                     b.HasOne("Garage_3.Models.Entites.Garage", "Garage")
@@ -545,6 +552,25 @@ namespace Garage_3.Migrations
                     b.Navigation("Garage");
                 });
 
+            modelBuilder.Entity("Garage_3.Models.Entites.ParkingPlaceVehicle", b =>
+                {
+                    b.HasOne("Garage_3.Models.Entites.ParkingPlace", "ParkingPlace")
+                        .WithMany("ParkingPlaceVehicles")
+                        .HasForeignKey("ParkingPlaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Garage_3.Models.Entites.Vehicle", "Vehicle")
+                        .WithMany("ParkingPlaceVehicles")
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ParkingPlace");
+
+                    b.Navigation("Vehicle");
+                });
+
             modelBuilder.Entity("Garage_3.Models.Entites.Vehicle", b =>
                 {
                     b.HasOne("Garage_3.Models.Entites.Membership", "Membership")
@@ -564,21 +590,6 @@ namespace Garage_3.Migrations
                     b.Navigation("VehicleType");
                 });
 
-            modelBuilder.Entity("ParkingPlaceVehicle", b =>
-                {
-                    b.HasOne("Garage_3.Models.Entites.ParkingPlace", null)
-                        .WithMany()
-                        .HasForeignKey("ParkingPlacesParkingPlaceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Garage_3.Models.Entites.Vehicle", null)
-                        .WithMany()
-                        .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Garage_3.Models.Entites.Garage", b =>
                 {
                     b.Navigation("Memberships");
@@ -589,6 +600,16 @@ namespace Garage_3.Migrations
             modelBuilder.Entity("Garage_3.Models.Entites.Membership", b =>
                 {
                     b.Navigation("Vehicles");
+                });
+
+            modelBuilder.Entity("Garage_3.Models.Entites.ParkingPlace", b =>
+                {
+                    b.Navigation("ParkingPlaceVehicles");
+                });
+
+            modelBuilder.Entity("Garage_3.Models.Entites.Vehicle", b =>
+                {
+                    b.Navigation("ParkingPlaceVehicles");
                 });
 #pragma warning restore 612, 618
         }

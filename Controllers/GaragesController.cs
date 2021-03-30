@@ -100,6 +100,9 @@ namespace Garage_3.Controllers
                 return NotFound();
             }
 
+            ////TEST REMOVE LATER
+            //UnParked(id);
+
             var garage = await dbGarage.Garage.FindAsync(id);
             if (garage == null)
             {
@@ -174,35 +177,74 @@ namespace Garage_3.Controllers
         /// <returns></returns>
         public async Task<IActionResult> UnParked(int? id)
         {
-
-            id = 1;
-            // Find the vehicle id
-            var vehicle = await dbGarage.Vehicle.FirstOrDefaultAsync(m => m.VehicleId == id);
-            vehicle.IsParked = false; 
-
             if (id == null)
             {
                 return NotFound();
             }
 
-            var garage = await dbGarage.Garage
-                .FirstOrDefaultAsync(m => m.GarageId == id);
-            if (garage == null)
+            
+            // Find the vehicle id
+            //var vehicle = await dbGarage.Vehicle.FirstOrDefaultAsync(v => v.VehicleId == id);
+            //var parkedV = await dbGarage.ParkingPlace.FirstOrDefaultAsync(p => p.ParkingPlaceId == vehicle.VehicleId);
+
+            // V > -- PPV -- < PP
+
+            var vehicle = await dbGarage.Vehicle.FindAsync(id);
+            vehicle.IsParked = false;
+
+            // find the parking place
+
+            var ppv = await dbGarage.ParkingPlaceVehicles.Where(p => p.VehicleId == id).FirstOrDefaultAsync();
+            var parkedV = await dbGarage.ParkingPlace.Where(pv => pv.ParkingPlaceId == id).FirstOrDefaultAsync();
+            parkedV.IsOccupied = false;
+
+            if (vehicle.IsParked == true && parkedV.IsOccupied == true)
             {
-                return NotFound();
+                // do something
+
+                var unpark = dbGarage.ParkingPlace
+                    .Where(pv => pv.ParkingPlaceId == vehicle.VehicleId)
+                    .Select(pv => pv.Vehicle);
+
+                dbGarage.Remove(unpark);
             }
 
-            
+            dbGarage.Remove(ppv);
+            dbGarage.Update(vehicle);
+            dbGarage.Update(parkedV);
+            dbGarage.SaveChanges();
 
             if (vehicle == null)
             {
                 return NotFound();
             }
 
-            return View(garage);
+            return View();
         }
 
+        // POST: Garages/UnParked/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UnParkedConfirmed(int id)
+        {
+            ReceiptViewModel receipt = null;
+            var vehicle = await dbGarage.Vehicle.FindAsync(id);
+            if (vehicle != null)
+            {
+                receipt = new ReceiptViewModel();
+                receipt.CheckIn = vehicle.CheckInTime;
+                receipt.Id = vehicle.VehicleId;
+                receipt.RegistrationNumber = vehicle.RegistrationNumber;
+                receipt.Id = vehicle.VehicleTypeId;
+            }
 
+            //dbGarage.Vehicle.Remove(vehicle); // TODO fix the unparked
+            await dbGarage.SaveChangesAsync();
+            TempData["message"] = $"You have successfully unparked your {vehicle.VehicleType}!";
+            return View("Receipt", receipt);
+            //return RedirectToAction(nameof(Receipt));
+
+        }
 
         // POST: Garages/Delete/5
         [HttpPost, ActionName("Delete")]
