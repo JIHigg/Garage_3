@@ -22,8 +22,8 @@ namespace Garage_3.Data
                 .HasMany(v => v.ParkingPlaces)
                 .WithMany(p => p.Vehicle)
                 .UsingEntity<ParkingPlaceVehicle>(
-                    pp => pp.HasOne(pp => pp.ParkingPlace).WithMany(p => p.ParkingPlaceVehicles),
-                    pp => pp.HasOne(pp => pp.Vehicle).WithMany(v => v.ParkingPlaceVehicles));
+                    pp => pp.HasOne(pp => pp.ParkingPlace).WithMany(p => p.ParkingPlaceVehicles).OnDelete(DeleteBehavior.NoAction),
+                    pp => pp.HasOne(pp => pp.Vehicle).WithMany(v => v.ParkingPlaceVehicles).OnDelete(DeleteBehavior.NoAction));
 
 
 
