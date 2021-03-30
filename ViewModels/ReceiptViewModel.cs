@@ -5,19 +5,32 @@ using System.Linq;
 using System.Threading.Tasks;
 using Garage_3.Utils;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 
 namespace Garage_3.ViewModels
 {
     public class ReceiptViewModel
     {
         public int Id { get; set; }
+
+        [DisplayName("Registration Number")]
         public string RegistrationNumber { get; set; }
+        [DisplayName("Member Number")]
         public string MemberNumber { get; set; }
+        [DisplayName("Vehicle Type")]
         public string Type { get; set; }
+        [DisplayName("Vehicle Size")]
         public int VehicleSize { get; set; }
+        [DisplayName("Member Spaces")]
         public int MemberSpaces { get; set; }
+        [DisplayName("Check In Time")]
+        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}")]
         public DateTime CheckIn { get; set; }
-        public DateTime CheckOut = DateTime.Now;
+
+        [DisplayName("Check Out Time")]
+        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}")]
+        public DateTime CheckOut  { get { return DateTime.Now; } }
+        [DisplayName("Parked Time")]
         public string ParkedTime {
             get
             {
@@ -26,9 +39,11 @@ namespace Garage_3.ViewModels
 
         public double BasePrice = 50;
         public double HourlyRate = 30;
+        
         public bool StayPro { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:C}")]
+        [DisplayName("Pro Discount")]
         public double ProDiscount
         {
             get
@@ -44,6 +59,7 @@ namespace Garage_3.ViewModels
             }
         }
         [DisplayFormat(DataFormatString = "{0:C}")]
+        [DisplayName("Pro Savings")]
         public double ProSavings
         { get
             {
@@ -60,6 +76,7 @@ namespace Garage_3.ViewModels
 
 
         [DisplayFormat(DataFormatString = "{0:C}")]
+        [DisplayName("Total Price")]
         public double TotalPrice//Todo Fix Discounts for Membership
         { get
             {
@@ -77,6 +94,8 @@ namespace Garage_3.ViewModels
                 return price;
             }
         }
+
+        [DisplayName("Check In ")]
         public string CheckInAsString
         {
             get
@@ -84,6 +103,7 @@ namespace Garage_3.ViewModels
                  return CheckIn.ToShortDateString();               
             }
         }
+        [DisplayName("Check Out")]
         public string CheckOutAsString { 
             get
             {

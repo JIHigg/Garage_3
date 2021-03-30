@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Garage_3.Utils;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Garage_3.ViewModels
 {
-    public class MembershipViewModel//Todo Build Membership Registration
+    public class MembershipViewModel
     {
         public bool IsGarageFull { get; set; }
 
@@ -17,7 +18,7 @@ namespace Garage_3.ViewModels
         [Required(ErrorMessage = "Please enter a First Name")]
         [DisplayName("First Name")]
         [StringLength(30, ErrorMessage = "First Name cannot be longer than 30 characters")]
-        [Remote(action: "CompareFirstName", controller: "Garages", AdditionalFields = nameof(LastName), ErrorMessage = "First Name cannot be same as LastName")]
+        [FNameValidation("LastName", ErrorMessage ="First Name and Last Name ")]
         public string FirstName { get; set; }
 
         [Required(ErrorMessage = "Please enter a Last Name")]

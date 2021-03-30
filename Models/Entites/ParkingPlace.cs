@@ -30,5 +30,7 @@ namespace Garage_3.Models.Entites
         public virtual ICollection<Vehicle> Vehicle { get; set; }
         public Garage Garage { get; set; }
 
+        public ICollection<ParkingPlaceVehicle> ParkingPlaceVehicles { get; set; }
+
     }
 }

@@ -1,8 +1,43 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model Garage_3.Models.ViewModel.HomeViewModel
+
+@{
+    ViewData["Title"] = Model.GarageName;
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4 w-75">Welcome to @Model.GarageName</h1>
+    <h4>Number of vehicles in the garage is @Model.NumberOfVehiclesInGarage</h4>
+    <h4>Number of empty places in the garage is @(Model.NumberOfParkingPlaces - Model.NumberOfVehiclesInGarage)</h4>
+    <hr />
+    <h4>Please enjoy your time in our garage, thank you! :)</h4>
+</div>
+
+@*New git init message*@
+
+<div class="row">
+    <div class="col-sm-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Park Your Car With Us!</h5>
+                <p class="card-text">We offer a secure, monitored location in Central Stockholm for your vehicle.</p>
+                <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Search in the Garage" asp-area="" asp-controller="Vehicles" asp-action="Garage">Search For Your Vehicle</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <form asp-controller="Garages" asp-action="Login">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Personnummer" class="control-label"></label>
+                <input asp-for="Personnummer" class="form-control" />
+                <span asp-validation-for="Personnummer" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Login" class="btn btn-primary" />
+            </div>
+            <div>
+                <a asp-action="Register">Register</a>
+            </div>
+        </form>
+    </div>
 </div>
