@@ -7,6 +7,7 @@ using Garage_3.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -43,11 +44,141 @@ namespace Garage_3.Controllers
             {
                 ViewBag.Message = messageObject.ToString();
             }
+            List<MembersViewModel> members =  dbGarage.Membership
+                                                    .Select(m => new MembersViewModel
+                                                    {
+                                                        FirstName = m.FirstName,
+                                                        LastName = m.LastName,
+                                                        Name = $"{m.FirstName} {m.LastName}",
+                                                        MembershipId = m.MembershipId,
+                                                        Vehicles = m.Vehicles.ToList(),
+                                                        TotalVehicles = m.Vehicles.Count()
+                                                    }).ToList();
             
 
-            return View(await dbGarage.Membership.ToListAsync());
+            return View( members);
         }
-        public async Task<IActionResult> VehicleList()
+
+        public async Task<IActionResult> MemberDetails(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var member = await dbGarage.Membership
+                .FirstOrDefaultAsync(m => m.MembershipId == id);
+            if (member == null)
+            {
+                return NotFound();
+            }
+
+            var model = new MembersViewModel
+            {
+                FirstName = member.FirstName,
+                LastName = member.LastName,
+                MembershipId = member.MembershipId,
+                Name = $"{member.FirstName} {member.LastName}",
+                TotalVehicles = dbGarage.Vehicle.Where(v=> v.MembershipId == member.MembershipId).Count(),
+                Vehicles = dbGarage.Vehicle.Where(v => v.MembershipId == member.MembershipId).ToList()
+            };
+
+             
+
+
+            return View( model);
+        }
+
+
+        [HttpGet]
+        public ActionResult Sort(string sortBy, string sortOrder, string firstName)
+        {
+            List<MembersViewModel> lsMembers = null;
+
+            if (String.IsNullOrWhiteSpace(sortOrder))
+                sortOrder = "asc";
+
+            lsMembers = dbGarage.Membership
+                 .Select
+                 (n => new MembersViewModel
+                 {
+                     MembershipId = n.MembershipId,
+                     FirstName = n.FirstName,
+                     LastName = n.LastName,
+                     Name = $"{n.FirstName} {n.LastName}",
+                     Vehicles = n.Vehicles.Where(v => v.MembershipId == n.MembershipId).ToList()
+                 })
+                 .ToList<MembersViewModel>();
+
+
+            // Sort list with vehicle
+            lsMembers = VehicleHelper.Sort(lsMembers, sortBy, sortOrder);
+
+            // Now set up sortOrder for next postback
+            if (sortOrder.Equals("desc"))
+                sortOrder = "asc";
+            else
+                sortOrder = "desc";
+
+
+            // Set ViewBags
+            ViewBag.SortOrder = sortOrder;
+            ViewBag.OldSortBy = sortBy;
+
+            return View("Members", lsMembers);
+        }
+
+        [HttpGet]
+        public ActionResult SearchFor(string sortOrder, string oldSortBy, string memberName)
+        {
+            List<MembersViewModel> lstMembers = null;
+
+            if (String.IsNullOrWhiteSpace(sortOrder))
+                sortOrder = "asc";
+
+            if (!String.IsNullOrWhiteSpace(memberName))
+            {
+                memberName = memberName.Trim();
+                memberName = memberName.ToLower();
+
+                ViewBag.SearchFor = memberName;
+                lstMembers = dbGarage.Membership.Where(r => r.FirstName.ToLower().Equals(memberName)||r.LastName.ToLower().Equals(memberName))
+                   .Select
+                    (m => new MembersViewModel
+                    {
+                        MembershipId = m.MembershipId,
+                        FirstName = m.FirstName,
+                        LastName = m.LastName,
+                        Name = $"{m.FirstName} {m.LastName}",
+                        Vehicles = m.Vehicles.Where(v=> v.MembershipId== m.MembershipId).ToList(),
+                        TotalVehicles = m.Vehicles.Count()
+                    })
+                    .ToList<MembersViewModel>();
+            }
+            else
+            {
+                lstMembers = dbGarage.Membership
+                    .Select
+                    (n => new MembersViewModel
+                    {
+                        MembershipId = n.MembershipId,
+                        FirstName = n.FirstName,
+                        LastName = n.LastName,
+                        Name = $"{n.FirstName} {n.LastName}",
+                        Vehicles = n.Vehicles.Where(v=> v.MembershipId==n.MembershipId).ToList(),
+                        TotalVehicles = n.Vehicles.Count()
+                    })
+                    .ToList<MembersViewModel>();
+            }
+
+            lstMembers = VehicleHelper.Sort(lstMembers, oldSortBy, sortOrder);
+
+            ViewBag.SortOrder = sortOrder;
+            ViewBag.OlderSortBy = oldSortBy;
+
+            return View("Members", lstMembers);
+        }
+            public async Task<IActionResult> VehicleList()
         {
             var messageObject = TempData["message"];
             if (messageObject != null)
@@ -66,9 +197,9 @@ namespace Garage_3.Controllers
                 return NotFound();
             }
 
-            var garage = await dbGarage.Garage
-                .FirstOrDefaultAsync(m => m.GarageId == id);
-            if (garage == null)
+            var vehicle = await dbGarage.Vehicle
+                .FirstOrDefaultAsync(m => m.VehicleId == id);
+            if (vehicle == null)
             {
                 return NotFound();
             }

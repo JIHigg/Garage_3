@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Garage_3.Models.Entites.Membership>
+﻿@model IEnumerable<MembersViewModel>
 
 @{
     ViewData["Title"] = "Members";
@@ -9,14 +9,31 @@
 <p>
     <a asp-action="Garages">Registered Members</a>
 </p>
-<table class="table">
+
+<form asp-controller="Garages" asp-action="SearchFor" method="get">
+    <input type="hidden" id="sortOrder" name="sortOrder" value="@ViewBag.SortOrder" />
+    <input type="hidden" id="oldSortBy" name="oldSortBy" value="@ViewBag.OldSortBy" />
+    <div class="form-group row">
+        <div class="col-md-6">
+            <div class="input-group">
+                <input type="text" class="form-control" id="memberName" name="memberName" placeholder="Search for Member" value="@ViewBag.SearchFor" />
+                <button class="btn btn-secondary" id="search" type="submit" data-toggle="tooltip" data-placement="bottom" title="Search for Member">Search</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<table class="table" id="dtMembers">
     <thead>
         <tr>
-            <th>
-               Member Name
+            <th class="thead-light">
+                @Html.DisplayNameFor(model => model.Name)
+                <a href='@Url.Action("Sort", "Garages", new { sortBy = "FirstName", sortOrder = ViewBag.SortOrder, lsMembers = ViewBag.SearchFor })' title="Sort">
+                    <i class="bi bi-arrow-down-up"></i>
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Vehicles)
+                @Html.DisplayNameFor(model => model.TotalVehicles)
             </th>
             
         </tr>
@@ -26,15 +43,15 @@
         <tr>
            
             <td>
-                @Html.DisplayFor(modelItem => item.FirstName) @Html.DisplayFor(modelItem => item.LastName)
+                @Html.DisplayFor(modelItem => item.Name)
             </td>
             
             <td>
-                @Html.DisplayFor(modelItem => item.Vehicles)
+                @Html.DisplayFor(modelItem => item.TotalVehicles)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.MembershipId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.MembershipId">Details</a> |
+                <a asp-action="MemberDetails" asp-route-id="@item.MembershipId">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.MembershipId">Delete</a>
             </td>
         </tr>

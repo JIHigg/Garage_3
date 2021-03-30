@@ -1,0 +1,41 @@
+﻿@model MembersViewModel
+
+@{
+    ViewData["Title"] = "MemberDetails";
+}
+
+<h1>MemberDetails</h1>
+
+<div>
+    <h4>Membership</h4>
+    <hr />
+    <dl class="row">
+        
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.FirstName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FirstName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.LastName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.LastName)
+        </dd>
+        @foreach (var vehicle in Model.Vehicles)
+            {
+                <td>
+                    @Html.DisplayFor(modelItem => vehicle.Model)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem =>vehicle.Make)
+                </td>
+            }
+       
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.MembershipId">Edit</a> |
+    <a asp-action="Members">Back to List</a>
+</div>

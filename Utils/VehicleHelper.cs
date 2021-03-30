@@ -66,6 +66,24 @@ namespace Garage_3.Utils
             return lsSortedVehicles;
         }
 
+        public static List<MembersViewModel> SortByFirstName(List<MembersViewModel> lsVehicles, string sortOrder)
+        {
+            List<MembersViewModel> lsSortedVehicles = lsVehicles;
+
+            if (lsVehicles != null && lsVehicles.Count > 1)
+            {
+                if (String.IsNullOrWhiteSpace(sortOrder))
+                    sortOrder = "asc";
+
+                if (sortOrder.Equals("desc"))
+                    lsSortedVehicles = lsVehicles.OrderByDescending(r => r.FirstName).ToList();
+                else
+                    lsSortedVehicles = lsVehicles.OrderBy(r => r.FirstName).ToList();
+            }
+
+            return lsSortedVehicles;
+        }
+
 
         /// <summary>
         /// Method sort list of vehicles
@@ -84,13 +102,33 @@ namespace Garage_3.Utils
             {
                 if (sortBy.Equals("RegistrationNumber"))
                     lsSortedVehicles = SortByRegistrationNumber(lsVehicles, sortOrder);
-                else if (sortBy.Equals("TimeOfArrival"))
+                else if (sortBy.Equals("FirstName"))
                     lsSortedVehicles = SortByTimeOfArrival(lsVehicles, sortOrder);
             }
 
             return lsSortedVehicles;
         }
 
+
+        /// <summary>
+        /// Sorts List of Members
+        /// </summary>
+        /// <param name="lsVehicles"></param>
+        /// <param name="sortBy"></param>
+        /// <param name="sortOrder"></param>
+        /// <returns></returns>
+        public static List<MembersViewModel> Sort(List<MembersViewModel> lsMembers, string sortBy, string sortOrder)
+        {
+            List<MembersViewModel> lsSortedMembers = lsMembers;
+
+            if (!String.IsNullOrWhiteSpace(sortBy))
+            {
+                 if (sortBy.Equals("FirstName"))
+                    lsSortedMembers = SortByFirstName(lsMembers, sortOrder);
+            }
+
+            return lsSortedMembers;
+        }
 
         /// <summary>
         /// Method create a text with information about how long ago dtParkedTime

@@ -20,5 +20,8 @@ namespace Garage_3.ViewModels
 
         [DisplayName("Registered Vehicles")]
         public List<Vehicle> Vehicles { get; set; }
+
+        [DisplayName("Total Vehicles")]
+        public int TotalVehicles { get; set; }
     }
 }
