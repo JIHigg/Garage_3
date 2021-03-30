@@ -16,3 +16,8 @@ var myInput = document.getElementById('NewVehicleType')
 myModal.addEventListener('shown.bs.modal', function () {
     myInput.focus()
 })
+
+$(document).ready(function () {
+    $('#dtMembers').DataTable();
+    $('.dataTables_length').addClass('bs-select');
+});
