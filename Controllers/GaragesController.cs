@@ -7,6 +7,7 @@ using Garage_3.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,6 +15,7 @@ namespace Garage_3.Controllers
 {
     public class GaragesController : Controller
     {
+        private List<VehicleType> m_lsVehicleType = null;
         private readonly IParkVehicleService m_ParkVehicleService;
         private readonly IMemberShipService m_MemberShipService;
         private readonly Garage_3Context dbGarage;
@@ -26,11 +28,13 @@ namespace Garage_3.Controllers
         }
 
         // GET: Garages
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             GetMessageFromTempData();
 
-            return View(dbGarage.Garage.ToList());
+            var garages = await dbGarage.Garage.ToListAsync();
+
+            return View(garages);
         }
 
         // GET: Garages/Details/5
@@ -579,6 +583,80 @@ namespace Garage_3.Controllers
         }
 
         #endregion // End of region Park a vehicle that already exist in database
+
+        #region Garage information
+
+        public async Task<IActionResult>ShowGarage()
+        {
+            // TODO Hard code to GarageId = 1
+            int iGarageId = 1;
+
+            var garage = await dbGarage.Garage.AsNoTracking().Where(i => i.GarageId == iGarageId).FirstOrDefaultAsync();
+            var members = await dbGarage.Membership.AsNoTracking().Where(i => i.GarageId == iGarageId).ToListAsync();
+            var vehicleTypes = dbGarage.VehicleType.AsNoTracking().ToList();
+
+            // TODO Check if algo is ok in another test project
+            // Now i want to know a members type of membership
+            foreach (var member in members)
+                member.TypeOfMembersShip = MemberShipHelper.GetTypeOfMemberShip(member);
+
+
+            var results = await dbGarage.ParkingPlace
+                .Join(
+                dbGarage.Vehicle,
+                parkingPlace => parkingPlace.ParkingPlaceId,
+                vehicle => vehicle.ParkingPlaceId,
+                (parkingPlace, vehicle) => new GarageVehiclesInfoViewModel
+                {
+                    VehicleId = vehicle.VehicleId,
+                    RegistrationNumber = vehicle.RegistrationNumber,
+                    CheckInTime = vehicle.CheckInTime,
+                    CheckOutTime = DateTime.Now,
+                    IsParked = vehicle.IsParked,
+                    VehicleTypeId = vehicle.VehicleTypeId,
+                    VehicleType = String.Empty,
+                    MemberShipId = vehicle.MembershipId,
+                    Make = vehicle.Make,
+                    Model = vehicle.Model,
+                    Year = vehicle.Year,
+                    ParkingPlaceId = parkingPlace.ParkingPlaceId,
+                    GarageId = parkingPlace.GarageId
+                })
+                .Where(n => n.GarageId == iGarageId && n.IsParked == true)
+                .ToListAsync();
+
+            // Get data i dident get in the join
+            Membership memberShip = null;
+            VehicleType vehicleType = null;            
+
+            foreach (var result in results)
+            {
+                // Get members first and last name
+                memberShip = members.Where(m => m.MembershipId == result.MemberShipId).FirstOrDefault();
+                if(memberShip != null)
+                {
+                    result.MemberFirstName = memberShip.FirstName;
+                    result.MemberLastName = memberShip.LastName;
+                }
+
+                // Get the vehicle type
+                vehicleType = vehicleTypes.Where(v => v.VehicleTypeId == result.VehicleTypeId).FirstOrDefault();
+                if(vehicleType != null)
+                    result.VehicleType = vehicleType.Type_Name;
+
+                result.ParkedTime = VehicleHelper.CalculateParkedTime(result.CheckInTime);
+            }
+
+            var model = new ShowGarageViewModel();
+            model.GarageName = garage.GarageName;
+            model.NumberOfParkingPlaces = garage.NumberOfParkingPlaces;
+            model.Members = members;
+            model.VehiclesInfo = results;
+
+            return View(model);
+        }
+
+        #endregion // End of Garage information
 
         private void GetMessageFromTempData()
         {
