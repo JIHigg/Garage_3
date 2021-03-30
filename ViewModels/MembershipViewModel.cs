@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Garage_3.Utils;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -17,7 +18,7 @@ namespace Garage_3.ViewModels
         [Required(ErrorMessage = "Please enter a First Name")]
         [DisplayName("First Name")]
         [StringLength(30, ErrorMessage = "First Name cannot be longer than 30 characters")]
-        [Compare("LastName")]
+        [FNameValidation("LastName", ErrorMessage ="First Name and Last Name ")]
         public string FirstName { get; set; }
 
         [Required(ErrorMessage = "Please enter a Last Name")]
