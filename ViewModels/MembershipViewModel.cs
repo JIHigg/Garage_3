@@ -8,6 +8,7 @@ namespace Garage_3.ViewModels
 {
     public class MembershipViewModel
     {
+        public int MembershipId { get; set; }
         public bool IsGarageFull { get; set; }
 
         [Required(ErrorMessage = "Please Enter a valid Person Number")]
@@ -18,7 +19,7 @@ namespace Garage_3.ViewModels
         [Required(ErrorMessage = "Please enter a First Name")]
         [DisplayName("First Name")]
         [StringLength(30, ErrorMessage = "First Name cannot be longer than 30 characters")]
-        [Remote(action: "CompareFirstName", controller:"Garages", AdditionalFields = nameof(LastName), ErrorMessage ="First Name and Last Name cannot match")]
+        //[Remote(action: "CompareFirstName", controller:"Garages", AdditionalFields = nameof(LastName), ErrorMessage ="First Name and Last Name cannot match")]
         public string FirstName { get; set; }
 
         [Required(ErrorMessage = "Please enter a Last Name")]

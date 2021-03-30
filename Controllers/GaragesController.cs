@@ -245,6 +245,65 @@ namespace Garage_3.Controllers
             return View(garage);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> MemberEdit(int? id)
+        {
+            if (id == null)
+            {
+                return View("Members");
+            }
+
+            var member = await dbGarage.Membership
+               .FirstOrDefaultAsync(m => m.MembershipId == id);
+            if (member == null)
+            {
+                return View("Members");
+            }
+
+            var model = new MembersViewModel
+            {
+                FirstName = member.FirstName,
+                LastName = member.LastName,
+                MembershipId = member.MembershipId,
+                Name = $"{member.FirstName} {member.LastName}",
+                TotalVehicles = dbGarage.Vehicle.Where(v => v.MembershipId == member.MembershipId).Count(),
+                Vehicles = dbGarage.Vehicle.Where(v => v.MembershipId == member.MembershipId).ToList()
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MemberEdit(int id, [Bind("Personnummer, FirstName, LastName, Address, PostNumber, City, StayPro")] MembershipViewModel membershipView)
+        {
+            if (ModelState.IsValid)
+            {
+                var member = dbGarage.Membership.FirstOrDefault(m => m.MembershipId == membershipView.MembershipId);
+
+                member.Personnummer = membershipView.Personnummer;
+                member.FirstName = membershipView.FirstName;
+                member.LastName = membershipView.LastName;
+                member.Address = membershipView.Address;
+                member.PostNumber = membershipView.PostNumber;
+                member.City = membershipView.City;
+                member.StayPro = membershipView.StayPro;
+
+
+                try
+                {
+                    dbGarage.Update(member);
+                    await dbGarage.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+                return View("Members");
+            }
+            else
+                return View(membershipView);
+        }
+
         // GET: Garages/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -462,7 +521,8 @@ namespace Garage_3.Controllers
                     Address = newMember.Address,
                     PostNumber = newMember.PostNumber,
                     City = newMember.City,
-                    StayPro = newMember.StayPro
+                    StayPro = newMember.StayPro,
+                    GarageId = 1
                 };
                 dbGarage.Membership.Add(member);
                 await dbGarage.SaveChangesAsync();
