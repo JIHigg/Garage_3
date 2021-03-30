@@ -35,6 +35,17 @@ namespace Garage_3.Controllers
             return View(garages);
         }
 
+        public async Task<IActionResult> VehicleList()
+        {
+            var messageObject = TempData["message"];
+            if (messageObject != null)
+            {
+                ViewBag.Message = messageObject as string;
+            }
+
+            return View(await dbGarage.Vehicle.Where(v=> v.IsParked == true).ToListAsync());
+        }
+
         // GET: Garages/Details/5
         public async Task<IActionResult> Details(int? id)
         {
