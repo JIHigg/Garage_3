@@ -64,8 +64,8 @@ namespace Garage_3.Controllers
             /*             // Hack
             if (!String.IsNullOrWhiteSpace(backTo))
                 ViewBag.BackTo = backTo;*/
-            return View(member);
-        }
+            //return View(member);
+        //}
 
 
         public async Task<IActionResult> MemberDetails(int? id, string backTo)
@@ -92,7 +92,7 @@ namespace Garage_3.Controllers
                 Vehicles = dbGarage.Vehicle.Where(v => v.MembershipId == member.MembershipId).ToList()
             };
 
-            // Hack
+            // Hack string backTo
             if (!String.IsNullOrWhiteSpace(backTo))
                 ViewBag.BackTo = backTo;
 
@@ -252,7 +252,7 @@ namespace Garage_3.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> MemberEdit(int? id)
+        public async Task<IActionResult> MemberEdit(int? id, string backTo)
         {
             if (id == null)
             {
@@ -279,6 +279,10 @@ namespace Garage_3.Controllers
                 City = member.City,
                 StayPro = member.StayPro
             };
+
+            // Hack string backTo
+            if (!String.IsNullOrWhiteSpace(backTo))
+                ViewBag.BackTo = backTo;
 
             return View(model);
         }

@@ -67,6 +67,7 @@
                         <td>@Html.DisplayFor(modelItem => item.RegistrationDate)</td>
                         <td>@Html.DisplayFor(modelItem => item.TypeOfMembersShip)</td>
                         <td>
+                            <a class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Membership Edit" asp-action="MemberEdit" asp-route-backTo="ShowGarage" asp-route-id="@item.MembershipId">Edit</a>
                             <a class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Membership Details" asp-action="MemberDetails" asp-route-backTo="ShowGarage" asp-route-id="@item.MembershipId">Details</a>
                         </td>
                     </tr>

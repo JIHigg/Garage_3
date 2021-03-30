@@ -12,7 +12,7 @@
     <div class="form-group row">
         <div class="col-md-6">
             <div class="input-group">
-                <input type="text" class="form-control" id="memberName" name="memberName" placeholder="Search for Member" value="@ViewBag.SearchFor" />
+                <input type="text" class="form-control" id="memberName" name="memberName" placeholder="Search for Member" value="@ViewBag.SearchFor" />&nbsp;
                 <button class="btn btn-secondary" id="search" type="submit" data-toggle="tooltip" data-placement="bottom" title="Search for Member">Search</button>
             </div>
         </div>
@@ -45,8 +45,8 @@
             @Html.DisplayFor(modelItem => item.TotalVehicles)
         </td>
         <td>
-            <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Edit" asp-action="MemberEdit" asp-route-id="@item.MembershipId">Edit</a>
-            <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Details" asp-action="MemberDetails" asp-route-id="@item.MembershipId">Details</a>
+            <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Edit" asp-action="MemberEdit" asp-route-backTo="Members" asp-route-id="@item.MembershipId">Edit</a>
+            <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Details" asp-action="MemberDetails" asp-route-backTo="Members" asp-route-id="@item.MembershipId">Details</a>
             <a class="btn btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete" asp-action="MemberDelete" asp-route-id="@item.MembershipId">Delete</a>
         </td>
     </tr>
