@@ -9,9 +9,7 @@
 <h4>New Membership</h4>
 <hr />
 <div class="row">
-
-    
-    
+       
         <div class="col-md-4 col-sm-4">
             <form asp-action="RegisterMember">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -65,7 +63,7 @@
 </div>
 
 <div>
-    <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Garage" asp-action="Index">Back to Garage</a>
+    <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Home" asp-controller="Home" asp-action="Index">Home</a>
 </div>
 
 @section Scripts {

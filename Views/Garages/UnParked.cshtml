@@ -64,7 +64,7 @@
     
     <form asp-action="UnParked">
         <input type="hidden" asp-for="VehicleId" />
-        <input type="submit" value="Unpark" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <input type="submit" value="Unpark" class="btn btn-danger" data-toggle="tooltip" data-placement="bottom" title="Unpark"/> |
+        <a asp-controller="Home" asp-action="Index" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Home">Home</a>
     </form>
 </div>

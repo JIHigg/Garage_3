@@ -49,7 +49,7 @@
                         <td>@Html.DisplayFor(modelItem => item.RegistrationDate)</td>
                         <td>@Html.DisplayFor(modelItem => item.TypeOfMembersShip)</td>
                         <td>
-                            <a class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Membership Details" asp-action="Details" asp-route-MembershipId="@item.MembershipId">Details</a>
+                            <a class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Membership Details" asp-action="MemberDetail" asp-route-id="@item.MembershipId">Details TODO</a>
                         </td>
                     </tr>
                 }
@@ -94,7 +94,7 @@
                     <td>@Html.DisplayFor(modelItem => item.MemberName)</td>
                     <td>@Html.DisplayFor(modelItem => item.ParkedTime)</td>
                     <td>
-                        <a class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Vehicle Details" asp-action="Details" asp-route-VehicleId="@item.VehicleId">Details</a>
+                        <a class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Vehicle Details" asp-action="VehicleDetails" asp-route-backTo="ShowGarage" asp-route-id="@item.VehicleId">Details</a>
                     </td>
                 </tr>
                 }
@@ -111,6 +111,6 @@
 
 </div>
 
-<div>
-    <a asp-action="Index" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Garage">Back to Garage</a>
+<div>    
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Home">Home</a>
 </div>
