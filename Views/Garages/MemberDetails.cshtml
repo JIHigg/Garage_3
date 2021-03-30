@@ -1,10 +1,10 @@
 ﻿@model MembersViewModel
 
 @{
-    ViewData["Title"] = "MemberDetails";
+    ViewData["Title"] = "Member Details";
 }
 
-<h1>MemberDetails</h1>
+<h1>Member Details</h1>
 
 <div>
     <h4>Membership</h4>
@@ -36,6 +36,6 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.MembershipId">Edit</a> |
-    <a asp-action="Members">Back to List</a>
+    <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Edit" asp-action="MemberEdit" asp-route-id="@Model.MembershipId">Edit</a>
+    <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="List members" asp-action="Members">Back to List of members</a>
 </div>

@@ -1,18 +1,21 @@
 ﻿@model Garage_3.Models.ViewModel.HomeViewModel
 
 @{
-    ViewData["Title"] = Model.GarageName;
+    ViewData["Title"] = "Home";
+}
+
+@{
+    await Html.RenderPartialAsync("_MessageView");
 }
 
 <div class="text-center">
     <h1 class="display-4 w-75">Welcome to @Model.GarageName</h1>
-    <h4>Number of vehicles in the garage is @Model.NumberOfVehiclesInGarage</h4>
-    <h4>Number of empty places in the garage is @(Model.NumberOfParkingPlaces - Model.NumberOfVehiclesInGarage)</h4>
+    <h5>Number of parkingplaces is @Model.NumberOfParkingPlaces</h5>
+    <h5>Number of vehicles in the garage is @Model.NumberOfVehiclesInGarage</h5>
+    <h5>Number of empty places in the garage is @(Model.NumberOfParkingPlaces - Model.NumberOfVehiclesInGarage)</h5>
     <hr />
-    <h4>Please enjoy your time in our garage, thank you! :)</h4>
+    <h5>Please enjoy your time in our garage, thank you! :)</h5>
 </div>
-
-@*New git init message*@
 
 <div class="row">
     <div class="col-sm-6">
@@ -20,24 +23,26 @@
             <div class="card-body">
                 <h5 class="card-title">Park Your Car With Us!</h5>
                 <p class="card-text">We offer a secure, monitored location in Central Stockholm for your vehicle.</p>
-                <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Search in the Garage" asp-area="" asp-controller="Garages" asp-action="Garage">Search For Your Vehicle</a>
+                <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Search in the Garage" asp-area="" asp-controller="Vehicles" asp-action="Garage">Search For Your Vehicle</a>
+                <br />
             </div>
         </div>
     </div>
     <div class="col-md-4">
-        <form asp-controller="Garages" asp-action="Login">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Personnummer" class="control-label"></label>
-                <input asp-for="Personnummer" class="form-control" />
-                <span asp-validation-for="Personnummer" class="text-danger"></span>
+        <div class="card">
+            <div class="card-body">
+                <form asp-controller="Garages" asp-action="Login">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Personnummer" class="control-label"></label>
+                        <input asp-for="Personnummer" class="form-control" />
+                        <span asp-validation-for="Personnummer" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Login" type="submit" value="Login" />
+                        <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Register" asp-controller="Garages" asp-action="RegisterMember">Register</a>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Login" class="btn btn-primary" />
-            </div>
-            <div>
-                <a asp-controller="Garages" asp-action="RegisterMember">Register</a>
-            </div>
-        </form>
     </div>
 </div>

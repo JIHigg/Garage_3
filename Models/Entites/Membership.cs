@@ -70,5 +70,13 @@ namespace Garage_3.Models.Entites
         public Garage Garage { get; set; }
         public virtual ICollection<Vehicle> Vehicles { get; set; }
 
+        [NotMapped]
+        [DisplayName("Name")]
+        public string MemberName { get { return FirstName + " " + LastName; } }
+
+        [NotMapped]
+        [DisplayName("Type of membership")]
+        public string TypeOfMembersShip { get; set; }
+
     }
 }

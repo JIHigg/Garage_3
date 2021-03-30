@@ -1,0 +1,109 @@
+﻿@model Garage_3.Models.ViewModel.VehicleDetailsViewModel
+
+@{
+    ViewData["Title"] = "Vehicle Details";
+}
+
+<h1>Vehicle Details</h1>
+
+<div>
+    <h4>Vehicle</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.VehicleId)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.VehicleId)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RegistrationNumber)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RegistrationNumber)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.NumberOfWheels)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.NumberOfWheels)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Year)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Year)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Model)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Model)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Make)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Make)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Color)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Color)
+        </dd>
+
+        @if (Model != null && Model.IsParked == true)
+        {
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.CheckInTime)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.CheckInTime)
+            </dd>
+        }
+
+
+        @if (Model != null && Model.IsParked == false)
+        {
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.CheckOutTime)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.CheckOutTime)
+            </dd>
+        }
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Parked)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Parked)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.VehicleType)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.VehicleType)
+        </dd>
+    </dl>
+</div>
+<div>
+    <!-- HACK -->
+    @if (ViewBag.BackTo != null && ViewBag.BackTo == "ShowGarage")
+    {// Hack
+        <a asp-action="ShowGarage" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Back to garage">Back to garage information</a>
+    }
+    else if (ViewBag.BackTo != null && ViewBag.BackTo == "vehicleList")
+    {
+        <a asp-controller="Garages" asp-action="VehicleList" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Home">Back to vehicle list</a>
+    }
+    else if (ViewBag.BackTo != null && ViewBag.BackTo == "ParkVehicleSelectVehicle")
+    {
+        <a asp-controller="Garages" asp-action="VehicleList" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Home">Back to vehicle list</a>               
+    }
+    else
+    {
+        <a asp-controller="Home" asp-action="Index" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Home">Home</a>
+    }
+</div>

@@ -1,0 +1,126 @@
+﻿@model Garage_3.Models.ViewModel.ShowGarageViewModel
+
+@{
+    ViewData["Title"] = "Show Garage";
+
+    int iNumberOfFreeParkingplaces = Model.NumberOfParkingPlaces - Model.NumberOfVehiclesInGarage;
+}
+
+<h1>Show information about Garage</h1>
+
+<div>
+    <h4>Garage</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-6">
+            @Html.DisplayNameFor(model => model.GarageName)
+        </dt>
+        <dd class="col-sm-6">
+            @Html.DisplayFor(model => model.GarageName)
+        </dd>
+        <dt class="col-sm-6">
+            @Html.DisplayNameFor(model => model.NumberOfParkingPlaces)
+        </dt>
+        <dd class="col-sm-6">
+            @Html.DisplayFor(model => model.NumberOfParkingPlaces)
+        </dd>
+        <dt class="col-sm-6">
+            @Html.DisplayNameFor(model => model.NumberOfVehiclesInGarage)
+        </dt>
+        <dd class="col-sm-6">
+            @Html.DisplayFor(model => model.NumberOfVehiclesInGarage)
+        </dd>
+        <dt class="col-sm-6">
+            @Html.DisplayName("Number of free parking places")
+        </dt>
+        <dd class="col-sm-6">
+            @iNumberOfFreeParkingplaces
+        </dd>
+    </dl>
+</div>
+
+<div>
+    <h4>Members</h4>
+
+    @if (Model.Members?.Count() > 0)
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Members[0].MemberName)</th>
+                    <th>@Html.DisplayNameFor(model => model.Members[0].Personnummer)</th>
+                    <th>@Html.DisplayNameFor(model => model.Members[0].RegistrationDate)</th>
+                    <th>@Html.DisplayNameFor(model => model.Members[0].TypeOfMembersShip)</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Members)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.MemberName)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Personnummer)</td>
+                        <td>@Html.DisplayFor(modelItem => item.RegistrationDate)</td>
+                        <td>@Html.DisplayFor(modelItem => item.TypeOfMembersShip)</td>
+                        <td>
+                            <a class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Membership Details" asp-action="MemberDetails" asp-route-id="@item.MembershipId">Details</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {        
+        <div>
+            <hr />
+            No members
+        </div>
+    }
+
+</div>
+
+<div>
+    <h4>Parked Vehicles</h4>  
+    
+    @if (Model.VehiclesInfo?.Count() > 0)
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.VehiclesInfo[0].Make)</th>
+                    <th>@Html.DisplayNameFor(model => model.VehiclesInfo[0].Model)</th>
+                    <th>@Html.DisplayNameFor(model => model.VehiclesInfo[0].RegistrationNumber)</th>
+                    <th>@Html.DisplayNameFor(model => model.VehiclesInfo[0].VehicleType)</th>
+                    <th>@Html.DisplayNameFor(model => model.VehiclesInfo[0].MemberName)</th>
+                    <th>@Html.DisplayNameFor(model => model.VehiclesInfo[0].ParkedTime)</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.VehiclesInfo)
+                {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Make)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Model)</td>
+                    <td>@Html.DisplayFor(modelItem => item.RegistrationNumber)</td>
+                    <td>@Html.DisplayFor(modelItem => item.VehicleType)</td>
+                    <td>@Html.DisplayFor(modelItem => item.MemberName)</td>
+                    <td>@Html.DisplayFor(modelItem => item.ParkedTime)</td>
+                    <td>
+                        <a class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Vehicle Details" asp-action="VehicleDetails" asp-route-backTo="ShowGarage" asp-route-id="@item.VehicleId">Details</a>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div>
+            <hr/>
+            No parked vehicles
+        </div>
+    }
+
+</div>

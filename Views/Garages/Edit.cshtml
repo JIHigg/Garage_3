@@ -18,20 +18,16 @@
                 <input asp-for="GarageName" class="form-control" />
                 <span asp-validation-for="GarageName" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <!--<div class="form-group">
                 <label asp-for="NumberOfParkingPlaces" class="control-label"></label>
                 <input asp-for="NumberOfParkingPlaces" class="form-control" />
                 <span asp-validation-for="NumberOfParkingPlaces" class="text-danger"></span>
-            </div>
+            </div>-->
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Save" type="submit" value="Save" />
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

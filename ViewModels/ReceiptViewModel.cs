@@ -1,11 +1,7 @@
-﻿using Garage_3.Models.Entites;
+﻿using Garage_3.Utils;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Garage_3.Utils;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Garage_3.ViewModels
 {
@@ -24,11 +20,11 @@ namespace Garage_3.ViewModels
         [DisplayName("Member Spaces")]
         public int MemberSpaces { get; set; }
         [DisplayName("Check In Time")]
-        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}")]
+        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd H:mm:ss}")]
         public DateTime CheckIn { get; set; }
 
         [DisplayName("Check Out Time")]
-        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}")]
+        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd H:mm:ss}")]
         public DateTime CheckOut  { get { return DateTime.Now; } }
         [DisplayName("Parked Time")]
         public string ParkedTime {

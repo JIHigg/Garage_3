@@ -6,11 +6,7 @@ namespace Garage_3.Models
     {
         [Required]
         [MinLength(4)]
-        public string FirstName { get; set; }
-
-        [Required]
-        [MinLength(4)]
-        public string LastName { get; set; }
+        public string FullName { get; set; }
 
         [Required]
         [EmailAddress]
