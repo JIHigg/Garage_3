@@ -120,10 +120,6 @@ else
     await Html.RenderPartialAsync("_ParkMessageView");
 }
 
-<div>
-    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Home">Home</a>
-</div>
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

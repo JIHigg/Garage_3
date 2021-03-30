@@ -9,7 +9,7 @@ namespace Garage_3.Models.ViewModel
     {
         public string GarageName { get; set; }
         public int NumberOfParkingPlaces { get; set; }
-        public int NumberOfVehiclesInGarage { get; internal set; }
+        public int NumberOfVehiclesInGarage { get; set; }
 
         public int Personnummer { get; set; }
 

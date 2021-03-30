@@ -12,6 +12,9 @@ namespace Garage_3.Models.ViewModel
         [DisplayName("Number of parking places in the garage")]
         public int NumberOfParkingPlaces { get; set; }
 
+        [DisplayName("Number of vehicles in the garage")]
+        public int NumberOfVehiclesInGarage { get; set; }
+
         public List<Membership> Members { get; set; }
 
         public List<GarageVehiclesInfoViewModel> VehiclesInfo { get; set; }

@@ -6,10 +6,6 @@
 
 <h1>Members</h1>
 
-<p>
-    <a asp-action="Garages">Registered Members</a>
-</p>
-
 <form asp-controller="Garages" asp-action="SearchFor" method="get">
     <input type="hidden" id="sortOrder" name="sortOrder" value="@ViewBag.SortOrder" />
     <input type="hidden" id="oldSortBy" name="oldSortBy" value="@ViewBag.OldSortBy" />
@@ -39,22 +35,25 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-           
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            
-            <td>
-                @Html.DisplayFor(modelItem => item.TotalVehicles)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.MembershipId">Edit</a> |
-                <a asp-action="MemberDetails" asp-route-id="@item.MembershipId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.MembershipId">Delete</a>
-            </td>
-        </tr>
+@foreach (var item in Model) 
+{
+    <tr>           
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>            
+        <td>
+            @Html.DisplayFor(modelItem => item.TotalVehicles)
+        </td>
+        <td>
+            <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Edit" asp-action="MemberEdit" asp-route-id="@item.MembershipId">Edit</a>
+            <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Details" asp-action="MemberDetails" asp-route-id="@item.MembershipId">Details</a>
+            <a class="btn btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete" asp-action="MemberDelete" asp-route-id="@item.MembershipId">Delete</a>
+        </td>
+    </tr>
 }
     </tbody>
 </table>
+
+<div>
+    <a asp-controller="Garages" asp-action="RegisterMember" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Register new member">Register new member</a>
+</div>

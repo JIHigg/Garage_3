@@ -6,10 +6,6 @@
 
 <h1 class="display-3 w-100">Parked vehicles</h1>
 
-<p>
-    <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Park A New Vehicle" asp-action="ParkVehicle">Park vehicle</a>
-</p>
-
 @if (Model != null && Model.Count() > 0)
 {
     <table class="table table-striped">
@@ -65,9 +61,9 @@
                         @Html.DisplayFor(modelItem => item.CheckInTime)
                     </td>
                     <td>
-                        <a class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Edit Your Vehicle" asp-action="Edit" asp-route-id="@item.VehicleId">Edit</a>
+                        <a class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Edit Your Vehicle" asp-action="VehicleEdit" asp-route-id="@item.VehicleId">Edit</a>
                         <a class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="bottom" title="View Vehicle Details" asp-action="VehicleDetails" asp-route-backTo="vehicleList" asp-route-id="@item.VehicleId">Details</a>
-                        <a class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="bottom" title="Leave the Garage" asp-action="Unparked" asp-route-id="@item.VehicleId">Leave garage</a>
+                        <a class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="bottom" title="Leave the Garage" asp-action="UnParkedConfirmed" asp-route-id="@item.VehicleId">Leave garage</a>
                     </td>
                 </tr>
             }
@@ -80,3 +76,7 @@ else
         <p>No vehicle</p>
     </div>
 }
+
+<div>
+    <a class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Park A New Vehicle" asp-action="ParkVehicle">Park vehicle</a>
+</div>

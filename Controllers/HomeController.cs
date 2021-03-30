@@ -1,6 +1,7 @@
 ﻿using Garage_3.Data;
 using Garage_3.Models;
 using Garage_3.Models.ViewModel;
+using Garage_3.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -14,11 +15,13 @@ namespace Garage_3.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly Garage_3Context _dbGarage_3;
+        private readonly IMailService mService;
 
-        public HomeController(ILogger<HomeController> logger, Garage_3Context context)
+        public HomeController(ILogger<HomeController> logger, Garage_3Context context, IMailService mailService)
         {
             _logger = logger;
             _dbGarage_3 = context;
+            mService = mailService;
         }
 
         public async Task<IActionResult> Index()
@@ -44,8 +47,25 @@ namespace Garage_3.Controllers
             return View();
         }
 
+        //GET
+        [HttpGet("contact")]
         public IActionResult Contact()
         {
+            return View();
+        }
+
+        //POST
+
+        [HttpPost("contact")]
+        public IActionResult Contact(ContactViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                mService.SendMessage("abc@outlook.com", model.Subject, $"From: {model.FullName} - {model.Email}, Message: {model.Message}");
+                ViewBag.UserMessage = "Your Mail has been sent succesfully!";
+                ModelState.Clear();
+            }
+
             return View();
         }
 

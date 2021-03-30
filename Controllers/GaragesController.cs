@@ -37,7 +37,6 @@ namespace Garage_3.Controllers
             return View(garages);
         }
 
-
         public async Task<IActionResult> Members()
         {
             var messageObject = TempData["message"];
@@ -45,7 +44,7 @@ namespace Garage_3.Controllers
             {
                 ViewBag.Message = messageObject.ToString();
             }
-            List<MembersViewModel> members =  dbGarage.Membership
+            List<MembersViewModel> members =  await dbGarage.Membership
                                                     .Select(m => new MembersViewModel
                                                     {
                                                         FirstName = m.FirstName,
@@ -54,11 +53,26 @@ namespace Garage_3.Controllers
                                                         MembershipId = m.MembershipId,
                                                         Vehicles = m.Vehicles.ToList(),
                                                         TotalVehicles = m.Vehicles.Count()
-                                                    }).ToList();
+                                                    }).ToListAsync();
             
 
             return View( members);
         }
+
+        public async Task<IActionResult> MemberEdit(int? id)
+        {
+            // TODO
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var member = await dbGarage.Membership.Where(i => i.MembershipId == id).FirstOrDefaultAsync();
+
+            return View(member);
+        }
+
 
         public async Task<IActionResult> MemberDetails(int? id)
         {
@@ -83,9 +97,6 @@ namespace Garage_3.Controllers
                 TotalVehicles = dbGarage.Vehicle.Where(v=> v.MembershipId == member.MembershipId).Count(),
                 Vehicles = dbGarage.Vehicle.Where(v => v.MembershipId == member.MembershipId).ToList()
             };
-
-             
-
 
             return View( model);
         }
@@ -179,9 +190,10 @@ namespace Garage_3.Controllers
 
             return View("Members", lstMembers);
         }
-            public async Task<IActionResult> VehicleList()
+
+        public async Task<IActionResult> VehicleList()
         {
-            var vehicles = await dbGarage.Vehicle.Where(v => v.IsParked == true).ToListAsync();
+            var vehicles = await dbGarage.Vehicle.Include("VehicleType").Where(v => v.IsParked == true).ToListAsync();
 
             return View(vehicles);
         }
@@ -249,10 +261,6 @@ namespace Garage_3.Controllers
                 return NotFound();
             }
 
-            ////TEST REMOVE LATER
-            
-            //UnParked(id);
-
             var garage = await dbGarage.Garage.FindAsync(id);
             if (garage == null)
             {
@@ -315,7 +323,7 @@ namespace Garage_3.Controllers
         }
 
         // GET: Garages/UnParked/
-        public IActionResult UnParked(int? id)
+        public IActionResult UnParkedOLD(int? id)
         {
             if (id == null)
             {
@@ -364,40 +372,74 @@ namespace Garage_3.Controllers
         }
 
 
-        // POST: Garages/UnParked/5
-        [HttpPost, ActionName("UnParkedV")]
-        [ValidateAntiForgeryToken]
+        //[HttpPost, ActionName("UnParkedV")]
         public async Task<IActionResult> UnParkedConfirmed(int id)
         {
-            ReceiptViewModel receipt = null;
-            var vehicle = await dbGarage.Vehicle.FindAsync(id);
-            if (vehicle != null)
-            {
-                receipt = new ReceiptViewModel();
-                receipt.CheckIn = vehicle.CheckInTime;
-                receipt.Id = vehicle.VehicleId;
-                receipt.RegistrationNumber = vehicle.RegistrationNumber;
-                receipt.Id = vehicle.VehicleTypeId;
-            }
+            var vehicle = await dbGarage.Vehicle.Where(i => i.VehicleTypeId == id).FirstOrDefaultAsync();
+            //ReceiptViewModel receipt = null;
+            //var vehicle = await dbGarage.Vehicle.FindAsync(id);
+            //if (vehicle != null)
+            //{
+            //    receipt = new ReceiptViewModel();
+            //    receipt.CheckIn = vehicle.CheckInTime;
+            //    receipt.Id = vehicle.VehicleId;
+            //    receipt.RegistrationNumber = vehicle.RegistrationNumber;
+            //    receipt.Id = vehicle.VehicleTypeId;
+            //}
 
-            //dbGarage.Vehicle.Remove(vehicle); // TODO fix the unparked
-            await dbGarage.SaveChangesAsync();
-            TempData["message"] = $"You have successfully unparked your {vehicle.VehicleType}!";
-            return View("Receipt", receipt);
-            //return RedirectToAction(nameof(Receipt));
+            ////dbGarage.Vehicle.Remove(vehicle); // TODO fix the unparked
+            //await dbGarage.SaveChangesAsync();
+            //TempData["message"] = $"You have successfully unparked your {vehicle.VehicleType}!";
+            //return View("Receipt", receipt);
+            ////return RedirectToAction(nameof(Receipt));
+            ///
+
+            return View("UnParked", vehicle);
 
         }
 
-        // POST: Garages/Delete/5
-        [HttpPost, ActionName("UnParked")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UnparkConfirmed(int? Vehicleid)//Todo -Add to Remove action for Receipt
+        private void UnparkTheVehicle(int? id)
         {
+            var vehicle = dbGarage.Vehicle.Where(i => i.VehicleId == id).FirstOrDefault();
+            if (vehicle != null)
+            {
+                vehicle.CheckOutTime = DateTime.Now;
+                vehicle.IsParked = false;
+            }
+
+            // find the parking place
+            var parkedV = dbGarage.ParkingPlace.Where(pv => pv.VehicleId == id).FirstOrDefault();
+            if (parkedV != null)
+            {
+                parkedV.IsOccupied = false;
+                parkedV.VehicleId = null;
+            }
+
+            dbGarage.SaveChanges();
+
+            var ppv = dbGarage.ParkingPlaceVehicles.Where(p => p.VehicleId == id).FirstOrDefault();
+
+            if (ppv != null)
+            {
+                dbGarage.Remove(ppv);
+                dbGarage.SaveChanges();
+            }
+        }
+
+
+
+        // POST: Garages/Delete/5
+        //[HttpPost, ActionName("UnParked")]
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> UnparkVehicle(int? id)//Todo -Add to Remove action for Receipt
+        {
+            // Unpark. Updates Vehicle and ParkingPlace in db
+            UnparkTheVehicle(id);
 
             //Create Receipt
             ReceiptViewModel receipt = null;
 
-            var vehicle = await dbGarage.Vehicle.FindAsync(Vehicleid);
+            var vehicle = await dbGarage.Vehicle.FindAsync(id);
             if (vehicle != null)
             {
                 var member = dbGarage.Membership
@@ -460,11 +502,11 @@ namespace Garage_3.Controllers
                     City = newMember.City,
                     StayPro = newMember.StayPro
                 };
+
                 dbGarage.Membership.Add(member);
                 await dbGarage.SaveChangesAsync();
                 TempData["message"] = $"Thank you, {member.FirstName} for joining our garage! Enjoy your 30 days of free Pro Membership!";
-                return RedirectToAction(nameof(Index));
-
+                return RedirectToAction("Home", nameof(Index));
             }
 
             return View(newMember);
@@ -547,6 +589,38 @@ namespace Garage_3.Controllers
 
         //    return View();
         //}
+
+        public IActionResult ParkedVehicleDetails(int id)
+        {
+            var vehicle = dbGarage.Vehicle.Where(v => v.VehicleId == id).Select(a => new VehicleDetailsViewModel
+            {
+                CheckInTime = a.CheckInTime,
+                CheckOutTime = a.CheckOutTime,
+                Color = a.Color,
+                IsParked = a.IsParked,
+                Make = a.Make,
+                Model = a.Model,
+                NumberOfWheels = a.NumberOfWheels,
+                RegistrationNumber = a.RegistrationNumber,
+                VehicleId = a.VehicleId,
+                Year = a.Year,
+                VehicleTypeId = a.VehicleTypeId,
+                MemberShipId = a.MembershipId
+            }).FirstOrDefault();
+
+
+            // Update with more information
+            if (vehicle != null)
+            {
+                var vehicleType = dbGarage.VehicleType.Where(i => i.VehicleTypeId == vehicle.VehicleTypeId).FirstOrDefault();
+                if (vehicleType != null)
+                    vehicle.VehicleType = vehicleType.Type_Name;
+
+                vehicle.Parked = vehicle.IsParked ? "Parked" : "Not parked";
+            }
+
+            return View(vehicle);
+        }
 
         public IActionResult VehicleDetails(int id, string backTo)
         {            
@@ -767,6 +841,22 @@ namespace Garage_3.Controllers
         /// Second action when you want to park a vehicle
         /// Member shall select a vehicle that shall be parked
         /// </summary>
+        /// <returns>View</returns>
+        public async Task<IActionResult> ParkingVehicleSelectVehicle(int MemberShipId)
+        {
+            var model = new ParkVehicleSelectVehicleViewModel();
+
+            model.MemberShip = await dbGarage.Membership.Where(m => m.MembershipId == MemberShipId).FirstOrDefaultAsync();
+            // Get all vehicle that is not parked
+            model.Vehicles = await dbGarage.Vehicle.Where(m => m.MembershipId == MemberShipId && m.IsParked == false).ToListAsync();
+
+            return View("ParkVehicleSelectVehicle", model);
+        }
+
+        /// <summary>
+        /// Second action when you want to park a vehicle
+        /// Member shall select a vehicle that shall be parked
+        /// </summary>
         /// <param name="parkVehicleSelectMemberViewModel"></param>
         /// <returns>View</returns>
         public async Task<IActionResult> ParkVehicleSelectVehicle([Bind("MemberShipId")] ParkVehicleSelectMemberViewModel parkVehicleSelectMemberViewModel)
@@ -819,6 +909,7 @@ namespace Garage_3.Controllers
 
             var garage = await dbGarage.Garage.AsNoTracking().Where(i => i.GarageId == iGarageId).FirstOrDefaultAsync();
             var members = await dbGarage.Membership.AsNoTracking().Where(i => i.GarageId == iGarageId).ToListAsync();
+            int iNumberOfOccupiedParkingPlaces = await dbGarage.ParkingPlace.Where(g => g.GarageId == garage.GarageId && g.IsOccupied).CountAsync();
             var vehicleTypes = dbGarage.VehicleType.AsNoTracking().ToList();
 
             // TODO Check if algo is ok in another test project
@@ -876,6 +967,7 @@ namespace Garage_3.Controllers
             var model = new ShowGarageViewModel();
             model.GarageName = garage.GarageName;
             model.NumberOfParkingPlaces = garage.NumberOfParkingPlaces;
+            model.NumberOfVehiclesInGarage = iNumberOfOccupiedParkingPlaces;
             model.Members = members;
             model.VehiclesInfo = results;
 

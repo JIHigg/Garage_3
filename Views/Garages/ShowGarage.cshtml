@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Show Garage";
+
+    int iNumberOfFreeParkingplaces = Model.NumberOfParkingPlaces - Model.NumberOfVehiclesInGarage;
 }
 
 <h1>Show information about Garage</h1>
@@ -10,17 +12,29 @@
     <h4>Garage</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-6">
+        <dt class="col-sm-6">
             @Html.DisplayNameFor(model => model.GarageName)
         </dt>
-        <dd class = "col-sm-6">
+        <dd class="col-sm-6">
             @Html.DisplayFor(model => model.GarageName)
         </dd>
-        <dt class = "col-sm-6">
+        <dt class="col-sm-6">
             @Html.DisplayNameFor(model => model.NumberOfParkingPlaces)
         </dt>
-        <dd class = "col-sm-6">
+        <dd class="col-sm-6">
             @Html.DisplayFor(model => model.NumberOfParkingPlaces)
+        </dd>
+        <dt class="col-sm-6">
+            @Html.DisplayNameFor(model => model.NumberOfVehiclesInGarage)
+        </dt>
+        <dd class="col-sm-6">
+            @Html.DisplayFor(model => model.NumberOfVehiclesInGarage)
+        </dd>
+        <dt class="col-sm-6">
+            @Html.DisplayName("Number of free parking places")
+        </dt>
+        <dd class="col-sm-6">
+            @iNumberOfFreeParkingplaces
         </dd>
     </dl>
 </div>
@@ -49,7 +63,7 @@
                         <td>@Html.DisplayFor(modelItem => item.RegistrationDate)</td>
                         <td>@Html.DisplayFor(modelItem => item.TypeOfMembersShip)</td>
                         <td>
-                            <a class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Membership Details" asp-action="MemberDetail" asp-route-id="@item.MembershipId">Details TODO</a>
+                            <a class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Membership Details" asp-action="MemberDetails" asp-route-id="@item.MembershipId">Details</a>
                         </td>
                     </tr>
                 }
@@ -109,8 +123,4 @@
         </div>
     }
 
-</div>
-
-<div>    
-    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Home">Home</a>
 </div>

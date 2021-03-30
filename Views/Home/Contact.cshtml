@@ -1,49 +1,48 @@
-﻿@{
-    ViewBag.Title = "Contact";
-
+﻿@model ContactViewModel
+@{
+    ViewBag.Title = "Contact Us";
 }
-<h1 class="w-25">@ViewData["Title"]</h1>
 
-<div class="container">
-    <div class="col-lg-9">
-        <form id="contact-form" method="post" action="#" role="form">
-            <div class="controls">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="for_name" class="control-label">Name</label>
-                            <input id="form_name" type="text" name="name" class="form-control" placeholder="Please enter your firstname" required="required" data-error="Firstname is required.">
-                            <div class="help-block with-errors"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="form_email" class="control-label">Email</label>
-                            <input id="form_email" type="email" name="email" class="form-control" placeholder="Please enter your email" required="required" data-error="Valid email is required.">
-                            <div class="help-block with-errors"></div>
-                        </div>
-                    </div>
+<div class="col-md-6 offset-md-3">
+    <div class="card card-body bg-light">
+        <form method="post">
 
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="form_message" class="control-label">Message</label>
-                            <textarea id="form_message" name="message" class="form-control" placeholder="Message for me" rows="4" required="required" data-error="Please,leave us a message."></textarea>
-                            <div class="help-block with-errors"></div>
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <input type="submit" class="btn btn-secondary" value="Send" data-toggle="tooltip" data-placement="bottom" title="Send email">
-                    </div>
-                </div>
+            <div asp-validation-summary="ModelOnly "> </div>
+
+            <div class="form-group">
+                <label asp-for="FullName">Full Name:</label>
+                <input asp-for="FullName" class="form-control" />
+                <span asp-validation-for="FullName"></span>
             </div>
+
+
+            <div class="form-group">
+                <label asp-for="Email">Email:</label>
+                <input type="email" asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Subject">Subject:</label>
+                <input type="text" asp-for="Subject" class="form-control" />
+                <span asp-validation-for="Subject" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Message">Message:</label>
+                <textarea rows="4" asp-for="Message" class="form-control"></textarea>
+                <span asp-validation-for="Message" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary"><i class='fas fa-envelope'></i> Send Message</button>
+            </div>
+            <div>@ViewBag.UserMessage</div>
         </form>
     </div>
-    <div class="col-lg-3">
-        <br/>
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2036.3205072897613!2d18.027570716350894!3d59.31090488165237!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x465f77c700f04af3%3A0x3ae9b125d56f6e1f!2sLexicon!5e0!3m2!1sen!2sse!4v1513777045043" width="400" height="300" frameborder="0" style="border:0" allowfullscreen></iframe>
-    </div>
 </div>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+}

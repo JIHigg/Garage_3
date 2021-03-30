@@ -43,5 +43,7 @@ namespace Garage_3.Models.ViewModel
 
         public int VehicleTypeId { get; set; }
         public string VehicleType { get; set; }
+
+        public int MemberShipId { get; set; }
     }
 }
